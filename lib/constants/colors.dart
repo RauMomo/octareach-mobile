@@ -15,4 +15,7 @@ class AppColors {
     800: const Color(0xFFDB7424),
     900: const Color(0xFFD56217)
   };
+
+  static const Color subtitleColor = Color(0xFF8D8D8D);
+  static const Color borderColor = Color(0xFFD1D5DB);
 }

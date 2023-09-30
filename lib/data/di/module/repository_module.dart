@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:boilerplate/data/local/datasources/post/post_datasource.dart';
-import 'package:boilerplate/data/network/apis/posts/post_api.dart';
-import 'package:boilerplate/data/repository/post/post_repository_impl.dart';
+import 'package:boilerplate/data/local/datasources/receipt/receipt_datasource.dart';
+import 'package:boilerplate/data/network/apis/receipt/receipt_api.dart';
+import 'package:boilerplate/data/repository/receipt/receipt_repository_impl.dart';
 import 'package:boilerplate/data/repository/setting/setting_repository_impl.dart';
 import 'package:boilerplate/data/repository/user/user_repository_impl.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
-import 'package:boilerplate/domain/repository/post/post_repository.dart';
+import 'package:boilerplate/domain/repository/receipt/receipt_repository.dart';
 import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 
@@ -23,9 +23,9 @@ mixin RepositoryModule {
       getIt<SharedPreferenceHelper>(),
     ));
 
-    getIt.registerSingleton<PostRepository>(PostRepositoryImpl(
-      getIt<PostApi>(),
-      getIt<PostDataSource>(),
+    getIt.registerSingleton<GoodsReceiptRepository>(GoodsReceiptRepositoryImpl(
+      getIt<GoodsReceiptApi>(),
+      getIt<GoodsReceiptDataSource>(),
     ));
   }
 }

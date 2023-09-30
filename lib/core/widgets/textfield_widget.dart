@@ -1,3 +1,6 @@
+import 'package:boilerplate/constants/colors.dart';
+import 'package:boilerplate/constants/dimens.dart';
+import 'package:boilerplate/utils/conversion/extensions.dart';
 import 'package:flutter/material.dart';
 
 class TextFieldWidget extends StatelessWidget {
@@ -6,6 +9,7 @@ class TextFieldWidget extends StatelessWidget {
   final String? errorText;
   final bool isObscure;
   final bool isIcon;
+  final String title;
   final TextInputType? inputType;
   final TextEditingController textController;
   final EdgeInsets padding;
@@ -20,27 +24,42 @@ class TextFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: padding,
-      child: TextFormField(
-        controller: textController,
-        focusNode: focusNode,
-        onFieldSubmitted: onFieldSubmitted,
-        onChanged: onChanged,
-        autofocus: autoFocus,
-        textInputAction: inputAction,
-        obscureText: this.isObscure,
-        maxLength: 25,
-        keyboardType: this.inputType,
-        style: Theme.of(context).textTheme.bodyText1,
-        decoration: InputDecoration(
-            hintText: this.hint,
-            hintStyle:
-                Theme.of(context).textTheme.bodyText1!.copyWith(color: hintColor),
-            errorText: errorText,
-            counterText: '',
-            icon: this.isIcon ? Icon(this.icon, color: iconColor) : null),
-      ),
-    );
+        padding: padding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style: context.textTheme.labelLarge, textAlign: TextAlign.left),
+            Dimens.vSpaceTiny,
+            TextFormField(
+              controller: textController,
+              focusNode: focusNode,
+              onFieldSubmitted: onFieldSubmitted,
+              onChanged: onChanged,
+              autofocus: autoFocus,
+              textInputAction: inputAction,
+              obscureText: this.isObscure,
+              maxLength: 45,
+              keyboardType: this.inputType,
+              style: Theme.of(context).textTheme.bodyLarge,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(width: 1.0, color: AppColors.borderColor),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  hintText: this.hint,
+                  hintStyle: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: hintColor),
+                  errorText: errorText,
+                  counterText: '',
+                  prefixIcon:
+                      this.isIcon ? Icon(this.icon, color: iconColor) : null),
+            ),
+          ],
+        ));
   }
 
   const TextFieldWidget({
@@ -48,6 +67,7 @@ class TextFieldWidget extends StatelessWidget {
     required this.icon,
     required this.errorText,
     required this.textController,
+    required this.title,
     this.inputType,
     this.hint,
     this.isObscure = false,
@@ -61,5 +81,4 @@ class TextFieldWidget extends StatelessWidget {
     this.autoFocus = false,
     this.inputAction,
   }) : super(key: key);
-
 }

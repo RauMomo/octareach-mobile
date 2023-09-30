@@ -1,11 +1,15 @@
+import 'package:boilerplate/constants/assets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AppIconWidget extends StatelessWidget {
-  final image;
+  final String image;
+
+  static const String suffixType = '.svg';
 
   const AppIconWidget({
     Key? key,
-    this.image,
+    required this.image,
   }) : super(key: key);
 
   @override
@@ -21,9 +25,19 @@ class AppIconWidget extends StatelessWidget {
       imageSize = (size.height * 0.20);
     }
 
-    return Image.asset(
-      image,
-      height: imageSize,
-    );
+    return image.endsWith(suffixType)
+        ? SvgPicture.asset(
+            image,
+            fit: BoxFit.cover,
+            allowDrawingOutsideViewBox: true,
+            semanticsLabel: 'Octareach Logo',
+          )
+        : Container(
+            child: Image.asset(
+              Assets.appLogo,
+              height: 200,
+              width: 200,
+            ),
+          );
   }
 }

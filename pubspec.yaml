@@ -10,7 +10,7 @@ description: A flutter boilerplate project created using MobX and Provider.
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.6 <4.0.0'
+  sdk: '>=3.0.1 <4.0.0'
   
 dependencies:
   flutter:
@@ -23,6 +23,7 @@ dependencies:
   another_flushbar: ^1.12.29
   # B
   # C
+  connectivity_plus: ^4.0.2
   cupertino_icons: ^1.0.5
   # D
   dio: ^5.1.1
@@ -30,6 +31,7 @@ dependencies:
   event_bus: ^2.0.0
   # F
   flutter_mobx: ^2.0.6+5
+  flutter_svg: ^1.1.6
   # G
   get_it: ^7.2.0
   google_fonts: ^4.0.3
@@ -38,6 +40,7 @@ dependencies:
   # I
   intl: ^0.18.0
   # J
+  json_annotation: ^4.8.1
   json_serializable: ^6.6.1
   # K
   # L
@@ -98,7 +101,10 @@ flutter:
   assets:
   - assets/images/
   - assets/icons/
+  - assets/json/
   - assets/lang/
+  - assets/svg/
+  - assets/svg/navbar/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

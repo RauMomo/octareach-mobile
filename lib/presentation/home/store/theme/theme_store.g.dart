@@ -25,6 +25,22 @@ mixin _$ThemeStore on _ThemeStore, Store {
     });
   }
 
+  late final _$_currentTabIndexAtom =
+      Atom(name: '_ThemeStore._currentTabIndex', context: context);
+
+  @override
+  int get _currentTabIndex {
+    _$_currentTabIndexAtom.reportRead();
+    return super._currentTabIndex;
+  }
+
+  @override
+  set _currentTabIndex(int value) {
+    _$_currentTabIndexAtom.reportWrite(value, super._currentTabIndex, () {
+      super._currentTabIndex = value;
+    });
+  }
+
   late final _$changeBrightnessToDarkAsyncAction =
       AsyncAction('_ThemeStore.changeBrightnessToDark', context: context);
 

@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/constants/assets.dart';
+import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/app_icon_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
@@ -9,6 +10,7 @@ import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/utils/conversion/extensions.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -36,10 +38,21 @@ class _LoginScreenState extends State<LoginScreen> {
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
 
+  //ui state :-----------------------------------------------------------------
+  late bool isChecked;
+  late AppLocalizations locale;
+
   @override
   void initState() {
     super.initState();
+    isChecked = false;
     _passwordFocusNode = FocusNode();
+  }
+
+  @override
+  void didChangeDependencies() {
+    locale = context.appLocale;
+    super.didChangeDependencies();
   }
 
   @override
@@ -56,20 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Material(
       child: Stack(
         children: <Widget>[
-          MediaQuery.of(context).orientation == Orientation.landscape
-              ? Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: _buildLeftSide(),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: _buildRightSide(),
-                    ),
-                  ],
-                )
-              : Center(child: _buildRightSide()),
+          Center(child: _buildRightSide()),
           Observer(
             builder: (context) {
               return _userStore.success
@@ -90,15 +90,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildLeftSide() {
-    return SizedBox.expand(
-      child: Image.asset(
-        Assets.carBackground,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
   Widget _buildRightSide() {
     return SingleChildScrollView(
       child: Padding(
@@ -108,11 +99,15 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            AppIconWidget(image: 'assets/icons/ic_appicon.png'),
+            AppIconWidget(image: Assets.appLogo),
+            _buildOnboardingButton(),
             SizedBox(height: 24.0),
             _buildUserIdField(),
             _buildPasswordField(),
-            _buildForgotPasswordButton(),
+            _buildRememberMeButton(),
+            SizedBox(
+              height: context.mediaQuery.size.height * .05,
+            ),
             _buildSignInButton()
           ],
         ),
@@ -124,7 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context).translate('login_et_user_email'),
+          title: 'User Name',
+          hint: locale.translate('login_et_user_email'),
           inputType: TextInputType.emailAddress,
           icon: Icons.person,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
@@ -147,8 +143,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint:
-              AppLocalizations.of(context).translate('login_et_user_password'),
+          title: 'Password',
+          hint: locale.translate('login_et_user_password'),
           isObscure: true,
           padding: EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
@@ -164,27 +160,33 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildForgotPasswordButton() {
+  Widget _buildRememberMeButton() {
     return Align(
-      alignment: FractionalOffset.centerRight,
-      child: MaterialButton(
-        padding: EdgeInsets.all(0.0),
-        child: Text(
-          AppLocalizations.of(context).translate('login_btn_forgot_password'),
-          style: Theme.of(context)
-              .textTheme
-              .caption
-              ?.copyWith(color: Colors.orangeAccent),
+      alignment: FractionalOffset.centerLeft,
+      child: CheckboxListTile(
+        value: isChecked,
+        controlAffinity: ListTileControlAffinity.leading,
+        contentPadding: EdgeInsets.zero,
+        dense: true,
+        title: Transform.translate(
+          offset: Offset(-Dimens.horizontal_padding, 0),
+          child: Text(
+            locale.translate('login_btn_remember_me'),
+            style: context.textTheme.labelMedium,
+          ),
         ),
-        onPressed: () {},
+        onChanged: (value) {
+          setState(() {
+            onCheckboxChanged(value!);
+          });
+        },
       ),
     );
   }
 
   Widget _buildSignInButton() {
     return RoundedButtonWidget(
-      buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
-      buttonColor: Colors.orangeAccent,
+      buttonText: locale.translate('login_btn_sign_in'),
       textColor: Colors.white,
       onPressed: () async {
         if (_formStore.canLogin) {
@@ -194,6 +196,21 @@ class _LoginScreenState extends State<LoginScreen> {
           _showErrorMessage('Please fill in all fields');
         }
       },
+    );
+  }
+
+  Widget _buildOnboardingButton() {
+    return Column(
+      children: [
+        Text(
+          locale.translate('login_title'),
+          style: context.textTheme.titleLarge,
+        ),
+        Text(
+          locale.translate('login_subtitle'),
+          style: context.textTheme.bodyMedium,
+        )
+      ],
     );
   }
 
@@ -217,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: locale.translate('home_tv_error'),
             duration: Duration(seconds: 3),
           )..show(context);
         }
@@ -226,6 +243,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return SizedBox.shrink();
   }
+
+  onCheckboxChanged(bool value) {}
 
   // dispose:-------------------------------------------------------------------
   @override

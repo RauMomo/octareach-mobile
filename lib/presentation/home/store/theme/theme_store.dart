@@ -20,8 +20,13 @@ abstract class _ThemeStore with Store {
   @observable
   bool _darkMode = false;
 
+  @observable
+  int _currentTabIndex = 0;
+
   // getters:-------------------------------------------------------------------
   bool get darkMode => _darkMode;
+
+  int get currentTabIndex => _currentTabIndex;
 
   // constructor:---------------------------------------------------------------
   _ThemeStore(this._repository, this.errorStore) {
@@ -33,6 +38,10 @@ abstract class _ThemeStore with Store {
   Future changeBrightnessToDark(bool value) async {
     _darkMode = value;
     await _repository.changeBrightnessToDark(value);
+  }
+
+  void changeTabIndex(int index) {
+    _currentTabIndex = index;
   }
 
   // general methods:-----------------------------------------------------------

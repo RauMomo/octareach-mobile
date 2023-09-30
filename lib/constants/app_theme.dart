@@ -18,6 +18,7 @@
 /// In order to use this newly created setting or even the colours in it, you would just
 /// `import` this file in your project, anywhere you needed it.
 /// `import 'path/to/setting.dart';`
+import 'package:boilerplate/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -54,17 +55,17 @@ class AppThemeData {
           _lightFillColor.withOpacity(0.80),
           _darkFillColor,
         ),
-        contentTextStyle: _textTheme.subtitle1!.apply(color: _darkFillColor),
+        contentTextStyle: _textTheme.titleMedium!.apply(color: _darkFillColor),
       ),
     );
   }
 
   static const ColorScheme lightColorScheme = ColorScheme(
-    primary: Color(0xFFd21e1d),
+    primary: Color(0xFF169A15),
     primaryContainer: Color(0xFF9e1718),
     secondary: Color(0xFFEFF3F3),
     secondaryContainer: Color(0xFFFAFBFB),
-    background: Color(0xFFE6EBEB),
+    background: Color(0xFFF3F4F6),
     surface: Color(0xFFFAFBFB),
     onBackground: Colors.white,
     error: _lightFillColor,
@@ -76,7 +77,7 @@ class AppThemeData {
   );
 
   static const ColorScheme darkColorScheme = ColorScheme(
-    primary: Color(0xFFFF8383),
+    primary: Color(0xFF169A15),
     primaryContainer: Color(0xFF1CDEC9),
     secondary: Color(0xFF4D1F7C),
     secondaryContainer: Color(0xFF451B6F),
@@ -98,15 +99,20 @@ class AppThemeData {
   static const _bold = FontWeight.w700;
 
   static final TextTheme _textTheme = TextTheme(
-    headline4: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 20.0),
-    caption: GoogleFonts.oswald(fontWeight: _semiBold, fontSize: 16.0),
-    headline5: GoogleFonts.oswald(fontWeight: _medium, fontSize: 16.0),
-    subtitle1: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 16.0),
-    overline: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 12.0),
-    bodyText1: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 14.0),
-    subtitle2: GoogleFonts.montserrat(fontWeight: _medium, fontSize: 14.0),
-    bodyText2: GoogleFonts.montserrat(fontWeight: _regular, fontSize: 16.0),
-    headline6: GoogleFonts.montserrat(fontWeight: _bold, fontSize: 16.0),
-    button: GoogleFonts.montserrat(fontWeight: _semiBold, fontSize: 14.0),
+    titleLarge: GoogleFonts.inter(fontWeight: _bold, fontSize: 20.0),
+    titleMedium: GoogleFonts.inter(fontWeight: _semiBold, fontSize: 18.0),
+    titleSmall: GoogleFonts.inter(fontWeight: _semiBold, fontSize: 16.0),
+    bodyLarge: GoogleFonts.inter(fontWeight: _medium, fontSize: 16.0),
+    bodyMedium: GoogleFonts.inter(fontWeight: _medium, fontSize: 14.0),
+    bodySmall: GoogleFonts.inter(fontWeight: _medium, fontSize: 13.0),
+    headlineLarge: GoogleFonts.inter(fontWeight: _bold, fontSize: 32.0),
+    headlineMedium: GoogleFonts.inter(fontWeight: _bold, fontSize: 28.0),
+    headlineSmall: GoogleFonts.inter(fontWeight: _semiBold, fontSize: 24.0),
+    labelLarge: GoogleFonts.inter(
+        fontWeight: _semiBold, fontSize: 14.0, color: AppColors.subtitleColor),
+    labelMedium: GoogleFonts.inter(
+        fontWeight: _semiBold, fontSize: 12.0, color: AppColors.subtitleColor),
+    labelSmall: GoogleFonts.inter(
+        fontWeight: _regular, fontSize: 10.0, letterSpacing: .1),
   );
 }
