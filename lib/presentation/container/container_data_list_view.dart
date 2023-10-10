@@ -144,7 +144,9 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
             context.navigator.push(
               MaterialPageRoute(
                 builder: (context) {
-                  return ContainerDataDetailView();
+                  return ContainerDataDetailView(
+                    containerName: item.containerNumber!,
+                  );
                 },
               ),
             );
@@ -165,14 +167,14 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      item.containerNumber,
+                      item.containerNumber!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
                       style: context.textTheme.titleMedium,
                     ),
                     Text(
-                      item.dateTime,
+                      item.dateTime!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,

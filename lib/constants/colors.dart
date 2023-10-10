@@ -18,4 +18,5 @@ class AppColors {
 
   static const Color subtitleColor = Color(0xFF8D8D8D);
   static const Color borderColor = Color(0xFFD1D5DB);
+  static const Color successColor = Colors.green;
 }

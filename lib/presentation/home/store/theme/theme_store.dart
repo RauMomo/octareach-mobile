@@ -44,6 +44,10 @@ abstract class _ThemeStore with Store {
     _currentTabIndex = index;
   }
 
+  void resetTabIndex() {
+    _currentTabIndex = 0;
+  }
+
   // general methods:-----------------------------------------------------------
   Future init() async {
     _darkMode = _repository.isDarkMode;

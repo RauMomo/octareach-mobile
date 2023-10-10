@@ -33,6 +33,44 @@ class SharedPreferenceHelper {
     return _sharedPreference.setBool(Preferences.is_logged_in, value);
   }
 
+  Future<bool> saveProfile(String value) async {
+    return _sharedPreference.setString(Preferences.profile, value);
+  }
+
+  Future<bool> saveEmail(String email) async {
+    return _sharedPreference.setString(Preferences.email, email);
+  }
+
+  Future<String> getEmail() async {
+    try {
+      final str = _sharedPreference.getString(Preferences.email);
+      return str!;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  Future<String> getPassword() async {
+    try {
+      final str = _sharedPreference.getString(Preferences.password);
+      return str!;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  Future<bool> removeEmail() async {
+    return _sharedPreference.remove(Preferences.email);
+  }
+
+  Future<bool> savePassword(String password) async {
+    return _sharedPreference.setString(Preferences.password, password);
+  }
+
+  Future<bool> removePassword() async {
+    return _sharedPreference.remove(Preferences.password);
+  }
+
   // Theme:------------------------------------------------------
   bool get isDarkMode {
     return _sharedPreference.getBool(Preferences.is_dark_mode) ?? false;

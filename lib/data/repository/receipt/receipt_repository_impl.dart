@@ -4,7 +4,7 @@ import 'package:boilerplate/data/local/constants/db_constants.dart';
 import 'package:boilerplate/data/local/datasources/receipt/receipt_datasource.dart';
 import 'package:boilerplate/data/network/apis/receipt/receipt_api.dart';
 import 'package:boilerplate/domain/entity/receipt/goods_receipt.dart';
-import 'package:boilerplate/domain/entity/receipt/goods_receipt_list.dart';
+import 'package:boilerplate/domain/entity/receipt/goods_receipt_response.dart';
 import 'package:boilerplate/domain/repository/receipt/receipt_repository.dart';
 import 'package:sembast/sembast.dart';
 
@@ -20,16 +20,16 @@ class GoodsReceiptRepositoryImpl extends GoodsReceiptRepository {
 
   // Post: ---------------------------------------------------------------------
   @override
-  Future<GoodsReceiptList> getGoodsReceipt() async {
+  Future<GoodsReceiptData> getGoodsReceipt() async {
     // check to see if posts are present in database, then fetch from database
     // else make a network call to get all posts, store them into database for
     // later use
-    return await _receiptApi.getPosts().then((receiptList) {
-      receiptList.goods?.forEach((post) {
+    return await _receiptApi.getPosts().then((receiptData) {
+      receiptData.content.forEach((post) {
         _receiptDataSource.insert(post);
       });
 
-      return receiptList;
+      return receiptData;
     }).catchError((error) => throw error);
   }
 

@@ -2,10 +2,10 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class ContainerData {
-  final String containerNumber;
-  final int items;
-  final int quantity;
-  final String dateTime;
+  String? containerNumber;
+  int? items;
+  int? quantity;
+  String? dateTime;
 
   ContainerData(
       {required this.containerNumber,

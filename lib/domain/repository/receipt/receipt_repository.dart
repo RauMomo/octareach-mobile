@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:boilerplate/domain/entity/receipt/goods_receipt.dart';
-import 'package:boilerplate/domain/entity/receipt/goods_receipt_list.dart';
+import 'package:boilerplate/domain/entity/receipt/goods_receipt_response.dart';
 
 abstract class GoodsReceiptRepository {
-  Future<GoodsReceiptList> getGoodsReceipt();
+  Future<GoodsReceiptData> getGoodsReceipt();
 
   Future<List<GoodsReceipt>> findPostById(int id);
 

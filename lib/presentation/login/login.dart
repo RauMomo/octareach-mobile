@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/constants/assets.dart';
+import 'package:boilerplate/constants/colors.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/app_icon_widget.dart';
@@ -7,7 +8,6 @@ import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/conversion/extensions.dart';
@@ -16,7 +16,6 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
 
@@ -26,10 +25,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  //text controllers:-----------------------------------------------------------
-  TextEditingController _userEmailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final FormStore _formStore = getIt<FormStore>();
@@ -39,19 +34,20 @@ class _LoginScreenState extends State<LoginScreen> {
   late FocusNode _passwordFocusNode;
 
   //ui state :-----------------------------------------------------------------
-  late bool isChecked;
   late AppLocalizations locale;
 
   @override
   void initState() {
     super.initState();
-    isChecked = false;
     _passwordFocusNode = FocusNode();
+    // _userEmailController =
   }
 
   @override
   void didChangeDependencies() {
     locale = context.appLocale;
+    _formStore.setUserId(_userStore.email);
+    _formStore.setPassword(_userStore.password);
     super.didChangeDependencies();
   }
 
@@ -72,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Center(child: _buildRightSide()),
           Observer(
             builder: (context) {
-              return _userStore.success
+              return _userStore.isLoggedIn
                   ? navigate(context)
                   : _showErrorMessage(_formStore.errorStore.errorMessage);
             },
@@ -124,11 +120,11 @@ class _LoginScreenState extends State<LoginScreen> {
           inputType: TextInputType.emailAddress,
           icon: Icons.person,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _userEmailController,
+          textController: _userStore.userEmailController,
           inputAction: TextInputAction.next,
           autoFocus: false,
           onChanged: (value) {
-            _formStore.setUserId(_userEmailController.text);
+            _formStore.setUserId(_userStore.userEmailController.text);
           },
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
@@ -149,11 +145,11 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _passwordController,
+          textController: _userStore.passwordController,
           focusNode: _passwordFocusNode,
           errorText: _formStore.formErrorStore.password,
           onChanged: (value) {
-            _formStore.setPassword(_passwordController.text);
+            _formStore.setPassword(_userStore.passwordController.text);
           },
         );
       },
@@ -164,10 +160,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Align(
       alignment: FractionalOffset.centerLeft,
       child: CheckboxListTile(
-        value: isChecked,
+        value: _userStore.isRememberMe,
         controlAffinity: ListTileControlAffinity.leading,
         contentPadding: EdgeInsets.zero,
         dense: true,
+        checkColor: Colors.white,
+        fillColor: MaterialStateProperty.all(AppColors.successColor),
         title: Transform.translate(
           offset: Offset(-Dimens.horizontal_padding, 0),
           child: Text(
@@ -177,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         onChanged: (value) {
           setState(() {
-            onCheckboxChanged(value!);
+            _userStore.isRememberMe = !_userStore.isRememberMe;
           });
         },
       ),
@@ -189,9 +187,13 @@ class _LoginScreenState extends State<LoginScreen> {
       buttonText: locale.translate('login_btn_sign_in'),
       textColor: Colors.white,
       onPressed: () async {
+        print('in page' + _formStore.userEmail.toString());
+        print('in page' + _formStore.password.toString());
+
         if (_formStore.canLogin) {
           DeviceUtils.hideKeyboard(context);
-          _userStore.login(_userEmailController.text, _passwordController.text);
+          _userStore.login(_userStore.userEmailController.text,
+              _userStore.passwordController.text);
         } else {
           _showErrorMessage('Please fill in all fields');
         }
@@ -215,10 +217,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool(Preferences.is_logged_in, true);
-    });
-
     Future.delayed(Duration(milliseconds: 0), () {
       Navigator.of(context).pushNamedAndRemoveUntil(
           Routes.home, (Route<dynamic> route) => false);
@@ -250,8 +248,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     // Clean up the controller when the Widget is removed from the Widget tree
-    _userEmailController.dispose();
-    _passwordController.dispose();
     _passwordFocusNode.dispose();
     super.dispose();
   }

@@ -15,8 +15,9 @@
   "home_start": "Below are list of strings for home",
   "home_shipment": "Product Shipment",
   "home_container": "Container Data",
+  "home_container_detail": "Container",
   "home_tv_error": "Error",
-  "home_tv_no_post_found": "No posts found",
+  "home_tv_no_post_found": "No receive found",
   "home_tv_choose_language": "Choose Language",
   "home_end": "-------------------------------------------------------------------------------------"
 

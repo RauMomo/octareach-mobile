@@ -1,7 +1,6 @@
 import 'package:boilerplate/core/data/local/sembast/sembast_client.dart';
 import 'package:boilerplate/data/local/constants/db_constants.dart';
 import 'package:boilerplate/domain/entity/receipt/goods_receipt.dart';
-import 'package:boilerplate/domain/entity/receipt/goods_receipt_list.dart';
 import 'package:sembast/sembast.dart';
 
 class GoodsReceiptDataSource {
@@ -21,7 +20,7 @@ class GoodsReceiptDataSource {
 
   // DB functions:--------------------------------------------------------------
   Future<int> insert(GoodsReceipt post) async {
-    return await _receiptStore.add(_sembastClient.database, post.toMap());
+    return await _receiptStore.add(_sembastClient.database, post.toJson());
   }
 
   Future<int> count() async {
@@ -41,16 +40,15 @@ class GoodsReceiptDataSource {
     );
 
     // Making a List<Post> out of List<RecordSnapshot>
-    return recordSnapshots.map( (snapshot) {
-      final goods = GoodsReceipt.fromMap(snapshot.value);
+    return recordSnapshots.map((snapshot) {
+      final goods = GoodsReceipt.fromJson(snapshot.value);
       // An ID is a key of a record from the database.
-      goods.id = snapshot.key;
+      goods.id = snapshot.key.toString();
       return goods;
     }).toList();
   }
 
-  Future<GoodsReceiptList> getPostsFromDb() async {
-
+  Future<List<GoodsReceipt>> getPostsFromDb() async {
     // post list
     var goodsList;
 
@@ -61,13 +59,12 @@ class GoodsReceiptDataSource {
 
     // Making a List<Post> out of List<RecordSnapshot>
     if (recordSnapshots.length > 0) {
-      goodsList = GoodsReceiptList(
-          goods: recordSnapshots.map((snapshot) {
-        final goods = GoodsReceipt.fromMap(snapshot.value);
+      goodsList = recordSnapshots.map((snapshot) {
+        final goods = GoodsReceipt.fromJson(snapshot.value);
         // An ID is a key of a record from the database.
-        goods.id = snapshot.key;
+        goods.id = snapshot.key.toString();
         return goods;
-      }).toList());
+      }).toList();
     }
 
     return goodsList;
@@ -79,7 +76,7 @@ class GoodsReceiptDataSource {
     final finder = Finder(filter: Filter.byKey(post.id));
     return await _receiptStore.update(
       _sembastClient.database,
-      post.toMap(),
+      post.toJson(),
       finder: finder,
     );
   }

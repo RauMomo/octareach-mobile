@@ -2,7 +2,7 @@ class Endpoints {
   Endpoints._();
 
   // base url
-  static const String baseUrl = "http://jsonplaceholder.typicode.com";
+  static const String baseUrl = "https://api-dev.galaxytraco.com/api";
 
   // receiveTimeout
   static const int receiveTimeout = 15000;
@@ -10,6 +10,9 @@ class Endpoints {
   // connectTimeout
   static const int connectionTimeout = 30000;
 
-  // booking endpoints
-  static const String getPosts = baseUrl + "/posts";
+  // auth
+  static const String loginUrl = "/login";
+
+  // receipt
+  static const String receiptUrl = "/receive";
 }

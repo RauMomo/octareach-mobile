@@ -4,6 +4,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/container/container_data_list_view.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:boilerplate/presentation/profile/profile_screen.dart';
 import 'package:boilerplate/presentation/receipt/goods_receipt_list_view.dart';
 import 'package:boilerplate/utils/conversion/extensions.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ContainerDataListScreen(),
     Text('Ini halaman tambah data'),
     Text('Ini halaman upcoming'),
-    Text('Ini halaman profile'),
+    ProfileScreen()
   ];
 
   @override

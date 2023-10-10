@@ -2,7 +2,9 @@ import 'package:boilerplate/core/data/network/dio/configs/dio_configs.dart';
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/core/data/network/dio/interceptors/auth_interceptor.dart';
 import 'package:boilerplate/core/data/network/dio/interceptors/logging_interceptor.dart';
+import 'package:boilerplate/data/network/apis/container/container_api.dart';
 import 'package:boilerplate/data/network/apis/receipt/receipt_api.dart';
+import 'package:boilerplate/data/network/apis/user/user_api.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/data/network/interceptors/error_interceptor.dart';
 import 'package:boilerplate/data/network/rest_client.dart';
@@ -50,6 +52,16 @@ mixin NetworkModule {
 
     // api's:-------------------------------------------------------------------
     getIt.registerSingleton(
+      UserApi(
+        getIt<DioClient>(),
+        getIt<RestClient>(),
+      ),
+    );
+
+    getIt.registerSingleton(
         GoodsReceiptApi(getIt<DioClient>(), getIt<RestClient>()));
+
+    getIt.registerSingleton(
+        ContainerApi(getIt<DioClient>(), getIt<RestClient>()));
   }
 }

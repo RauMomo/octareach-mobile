@@ -16,18 +16,66 @@ mixin _$UserStore on _UserStore, Store {
           Computed<bool>(() => super.isLoading, name: '_UserStore.isLoading'))
       .value;
 
+  late final _$isLoggedInAtom =
+      Atom(name: '_UserStore.isLoggedIn', context: context);
+
+  @override
+  bool get isLoggedIn {
+    _$isLoggedInAtom.reportRead();
+    return super.isLoggedIn;
+  }
+
+  @override
+  set isLoggedIn(bool value) {
+    _$isLoggedInAtom.reportWrite(value, super.isLoggedIn, () {
+      super.isLoggedIn = value;
+    });
+  }
+
+  late final _$isRememberMeAtom =
+      Atom(name: '_UserStore.isRememberMe', context: context);
+
+  @override
+  bool get isRememberMe {
+    _$isRememberMeAtom.reportRead();
+    return super.isRememberMe;
+  }
+
+  @override
+  set isRememberMe(bool value) {
+    _$isRememberMeAtom.reportWrite(value, super.isRememberMe, () {
+      super.isRememberMe = value;
+    });
+  }
+
   late final _$successAtom = Atom(name: '_UserStore.success', context: context);
 
   @override
-  bool get success {
+  Observable<bool> get success {
     _$successAtom.reportRead();
     return super.success;
   }
 
   @override
-  set success(bool value) {
+  set success(Observable<bool> value) {
     _$successAtom.reportWrite(value, super.success, () {
       super.success = value;
+    });
+  }
+
+  late final _$flushbarAtom =
+      Atom(name: '_UserStore.flushbar', context: context);
+
+  @override
+  Flushbar<dynamic> get flushbar {
+    _$flushbarAtom.reportRead();
+    return super.flushbar;
+  }
+
+  @override
+  set flushbar(Flushbar<dynamic> value) {
+    _$flushbarAtom.reportWrite(value, super.flushbar, () {
+      super.flushbar = value;
     });
   }
 
@@ -35,13 +83,13 @@ mixin _$UserStore on _UserStore, Store {
       Atom(name: '_UserStore.loginFuture', context: context);
 
   @override
-  ObservableFuture<User?> get loginFuture {
+  ObservableFuture<UserInfo?> get loginFuture {
     _$loginFutureAtom.reportRead();
     return super.loginFuture;
   }
 
   @override
-  set loginFuture(ObservableFuture<User?> value) {
+  set loginFuture(ObservableFuture<UserInfo?> value) {
     _$loginFutureAtom.reportWrite(value, super.loginFuture, () {
       super.loginFuture = value;
     });
@@ -58,7 +106,10 @@ mixin _$UserStore on _UserStore, Store {
   @override
   String toString() {
     return '''
+isLoggedIn: ${isLoggedIn},
+isRememberMe: ${isRememberMe},
 success: ${success},
+flushbar: ${flushbar},
 loginFuture: ${loginFuture},
 isLoading: ${isLoading}
     ''';

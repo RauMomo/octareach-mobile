@@ -82,10 +82,10 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
 
   Widget _buildListView() {
     final locale = context.appLocale;
-    return _goodsStore.goodsReceiptList != null
+    return _goodsStore.goodsReceiptData != null
         ? ListView.separated(
             padding: EdgeInsets.symmetric(vertical: 16),
-            itemCount: _goodsStore.goodsReceiptList!.goods!.length,
+            itemCount: _goodsStore.goodsReceiptData!.content[0].product.length,
             separatorBuilder: (context, position) {
               return Divider();
             },
@@ -104,7 +104,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
   }
 
   Widget _buildListItem(int position) {
-    var item = _goodsStore.goodsReceiptList!.goods![position];
+    var item = _goodsStore.goodsReceiptData!.content[0].product[position];
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.0),
       child: Container(
@@ -128,39 +128,40 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
           contentPadding: EdgeInsets.symmetric(vertical: 8.0),
           leading: SizedBox.square(),
           trailing: PopupMenuButton(
-              elevation: 4.0,
-              constraints:
-                  BoxConstraints(minWidth: Dimens.screenWidth(context) * .1),
-              position: PopupMenuPosition.over,
-              offset: Offset(0.0, -16.0),
-              padding: EdgeInsets.all(0),
-              itemBuilder: (context) {
-                return <PopupMenuEntry>[
-                  PopupMenuItem(
-                    height: Dimens.screenHeight(context) * .04,
-                    value: '0',
-                    child: Text(
-                      'Edit Data',
-                      style: context.textTheme.bodySmall,
-                    ),
-                    // onTap: () => onSelected,
+            elevation: 4.0,
+            constraints:
+                BoxConstraints(minWidth: Dimens.screenWidth(context) * .1),
+            position: PopupMenuPosition.over,
+            offset: Offset(0.0, -16.0),
+            padding: EdgeInsets.all(0),
+            itemBuilder: (context) {
+              return <PopupMenuEntry>[
+                PopupMenuItem(
+                  height: Dimens.screenHeight(context) * .04,
+                  value: '0',
+                  child: Text(
+                    'Edit Data',
+                    style: context.textTheme.bodySmall,
                   ),
-                  PopupMenuItem(
-                    height: Dimens.screenHeight(context) * .04,
-                    value: '1',
-                    child: Text(
-                      'Hapus Data',
-                      style: context.textTheme.bodySmall,
-                    ),
-                    // onTap: () => onSelected,
-                  )
-                ];
-              },
-              child: FractionallySizedBox(
-                alignment: Alignment.center,
-                child: Icon(Icons.more_vert),
-                widthFactor: .1,
-              )),
+                  // onTap: () => onSelected,
+                ),
+                PopupMenuItem(
+                  height: Dimens.screenHeight(context) * .04,
+                  value: '1',
+                  child: Text(
+                    'Hapus Data',
+                    style: context.textTheme.bodySmall,
+                  ),
+                  // onTap: () => onSelected,
+                )
+              ];
+            },
+            child: FractionallySizedBox(
+              alignment: Alignment.center,
+              child: Icon(Icons.more_vert),
+              widthFactor: .1,
+            ),
+          ),
           // trailing: IconButton(
           //   padding: EdgeInsets.only(bottom: Dimens.screenHeight(context)),
           //   visualDensity: VisualDensity(vertical: -4, horizontal: -4),
@@ -179,7 +180,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      item.markingCode!,
+                      item.status,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -187,7 +188,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                           context.textTheme.bodyMedium!.copyWith(fontSize: 11),
                     ),
                     Text(
-                      item.dateTime!,
+                      item.updatedAt.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -201,14 +202,14 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      item.receivingNumber!,
+                      item.receiveId,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
                       style: context.textTheme.titleMedium,
                     ),
                     Text(
-                      item.containerNumber!,
+                      item.receiveId,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -222,7 +223,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      item.productTitle!,
+                      item.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -232,7 +233,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                              text: item.quantity.toString(),
+                              text: item.qc.toString(),
                               style: context.textTheme.titleMedium!
                                   .copyWith(fontWeight: FontWeight.bold)),
                           TextSpan(
@@ -254,7 +255,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                   indent: 0.0,
                 ),
                 Text(
-                  'Notes: ${item.notes}',
+                  'Notes:',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,

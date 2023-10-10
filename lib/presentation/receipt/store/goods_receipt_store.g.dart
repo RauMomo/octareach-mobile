@@ -32,19 +32,19 @@ mixin _$GoodsReceiptStore on _GoodsReceiptStore, Store {
     });
   }
 
-  late final _$goodsReceiptListAtom =
-      Atom(name: '_GoodsReceiptStore.goodsReceiptList', context: context);
+  late final _$goodsReceiptDataAtom =
+      Atom(name: '_GoodsReceiptStore.goodsReceiptData', context: context);
 
   @override
-  GoodsReceiptList? get goodsReceiptList {
-    _$goodsReceiptListAtom.reportRead();
-    return super.goodsReceiptList;
+  GoodsReceiptData? get goodsReceiptData {
+    _$goodsReceiptDataAtom.reportRead();
+    return super.goodsReceiptData;
   }
 
   @override
-  set goodsReceiptList(GoodsReceiptList? value) {
-    _$goodsReceiptListAtom.reportWrite(value, super.goodsReceiptList, () {
-      super.goodsReceiptList = value;
+  set goodsReceiptData(GoodsReceiptData? value) {
+    _$goodsReceiptDataAtom.reportWrite(value, super.goodsReceiptData, () {
+      super.goodsReceiptData = value;
     });
   }
 
@@ -68,15 +68,16 @@ mixin _$GoodsReceiptStore on _GoodsReceiptStore, Store {
       AsyncAction('_GoodsReceiptStore.getPosts', context: context);
 
   @override
-  Future<dynamic> getPosts() {
-    return _$getPostsAsyncAction.run(() => super.getPosts());
+  ObservableFuture<dynamic> getPosts() {
+    return ObservableFuture<dynamic>(
+        _$getPostsAsyncAction.run(() => super.getPosts()));
   }
 
   @override
   String toString() {
     return '''
 fetchPostsFuture: ${fetchPostsFuture},
-goodsReceiptList: ${goodsReceiptList},
+goodsReceiptData: ${goodsReceiptData},
 success: ${success},
 loading: ${loading}
     ''';

@@ -1,5 +1,5 @@
 import 'package:boilerplate/core/stores/error/error_store.dart';
-import 'package:boilerplate/domain/entity/receipt/goods_receipt_list.dart';
+import 'package:boilerplate/domain/entity/receipt/goods_receipt_response.dart';
 import 'package:boilerplate/utils/dio/dio_error_util.dart';
 import 'package:mobx/mobx.dart';
 
@@ -10,7 +10,7 @@ part 'goods_receipt_store.g.dart';
 class GoodsReceiptStore = _GoodsReceiptStore with _$GoodsReceiptStore;
 
 abstract class _GoodsReceiptStore with Store {
-  // constructor:---------------------------------------------------------------
+  //constructor:---------------------------------------------------------------
   _GoodsReceiptStore(this._getGoodsReceiptUseCase, this.errorStore);
 
   // use cases:-----------------------------------------------------------------
@@ -21,21 +21,25 @@ abstract class _GoodsReceiptStore with Store {
   final ErrorStore errorStore;
 
   // store variables:-----------------------------------------------------------
-  static ObservableFuture<GoodsReceiptList?> emptyReceiptResponse =
+  static ObservableFuture<GoodsReceiptData?> emptyReceiptResponse =
       ObservableFuture.value(null);
 
   @observable
   ObservableFuture<dynamic> fetchPostsFuture =
-      ObservableFuture<GoodsReceiptList?>(emptyReceiptResponse);
+      ObservableFuture<GoodsReceiptData?>(emptyReceiptResponse);
 
   @observable
-  GoodsReceiptList? goodsReceiptList;
+  GoodsReceiptData? goodsReceiptData;
 
   @observable
   bool success = false;
 
   @computed
   bool get loading => fetchPostsFuture.status == FutureStatus.pending;
+
+  // pagination state
+  @observable
+  // bool hasNextPage =
 
   // actions:-------------------------------------------------------------------
   @action
@@ -44,7 +48,7 @@ abstract class _GoodsReceiptStore with Store {
     fetchPostsFuture = ObservableFuture(future);
 
     future.then((goodsReceiptList) {
-      this.goodsReceiptList = goodsReceiptList;
+      this.goodsReceiptData = goodsReceiptList;
     }).catchError((error) {
       errorStore.errorMessage = DioErrorUtil.handleError(error);
     });
