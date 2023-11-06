@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 class DioErrorUtil {
   // general methods:-----------------------------------------------------------
-  static String handleError(DioError error) {
+  static String handleError(DioException error) {
     String errorDescription = "";
     if (error is DioError) {
       switch (error.type) {
@@ -22,7 +22,7 @@ class DioErrorUtil {
           break;
         case DioErrorType.badResponse:
           errorDescription =
-          "Received invalid status code: ${error.response?.statusCode}";
+              "Received invalid status code: ${error.response?.statusCode}";
           break;
         case DioErrorType.sendTimeout:
           errorDescription = "Send timeout in connection with API server";

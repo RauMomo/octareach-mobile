@@ -21,6 +21,16 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
       getIt<UpcomingContainerStore>();
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // check to see if already called api
+    if (!_containerStore.isLoading) {
+      _containerStore.fetchUpcomingContainer();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildBody(),
@@ -32,7 +42,7 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
     final locale = context.appLocale;
     return PreferredSize(
       preferredSize: Size.fromHeight(kToolbarHeight),
-      child: DefaultAppBar(trKey: 'home_container_detail', suffix: ''),
+      child: DefaultAppBar(trKey: 'home_upcoming_shipment', suffix: ''),
     );
   }
 
@@ -57,17 +67,19 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
 
   Widget _buildMainContent() {
     return Observer(
-      builder: (context) => _containerStore.isLoading
-          ? CustomProgressIndicatorWidget()
-          : Material(
-              child: _buildListView(),
-            ),
+      builder: (context) {
+        return _containerStore.isLoading
+            ? CustomProgressIndicatorWidget()
+            : Material(
+                child: _buildListView(),
+              );
+      },
     );
   }
 
   Widget _buildListView() {
     final containerList =
-        _containerStore.upcomingContainerList?.upcomingContainers;
+        _containerStore.upcomingContainerList!.upcomingContainers;
     final locale = context.appLocale;
     return containerList!.isNotEmpty
         ? ListView.separated(
@@ -92,7 +104,7 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
 
   Widget _buildListItem(int position) {
     var item =
-        _containerStore.upcomingContainerList?.upcomingContainers![position];
+        _containerStore.upcomingContainerList!.upcomingContainers![position];
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.0),
       child: Container(
@@ -115,48 +127,6 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
           minLeadingWidth: 0.0,
           contentPadding: EdgeInsets.symmetric(vertical: 8.0),
           leading: SizedBox.square(),
-          trailing: PopupMenuButton(
-              elevation: 4.0,
-              constraints:
-                  BoxConstraints(minWidth: Dimens.screenWidth(context) * .1),
-              position: PopupMenuPosition.over,
-              offset: Offset(0.0, -16.0),
-              padding: EdgeInsets.all(0),
-              itemBuilder: (context) {
-                return <PopupMenuEntry>[
-                  PopupMenuItem(
-                    height: Dimens.screenHeight(context) * .04,
-                    value: '0',
-                    child: Text(
-                      'Edit Data',
-                      style: context.textTheme.bodySmall,
-                    ),
-                    // onTap: () => onSelected,
-                  ),
-                  PopupMenuItem(
-                    height: Dimens.screenHeight(context) * .04,
-                    value: '1',
-                    child: Text(
-                      'Hapus Data',
-                      style: context.textTheme.bodySmall,
-                    ),
-                    // onTap: () => onSelected,
-                  )
-                ];
-              },
-              child: FractionallySizedBox(
-                alignment: Alignment.center,
-                child: Icon(Icons.more_vert),
-                widthFactor: .1,
-              )),
-          // trailing: IconButton(
-          //   padding: EdgeInsets.only(bottom: Dimens.screenHeight(context)),
-          //   visualDensity: VisualDensity(vertical: -4, horizontal: -4),
-          //   onPressed: () {
-          //     PopU
-          //   },
-          //   icon: Icon(Icons.more_vert),
-          // ),
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Column(
@@ -167,47 +137,90 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      item!.containerNumber!,
+                      item.containerNumber!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
-                      style:
-                          context.textTheme.bodyMedium!.copyWith(fontSize: 11),
+                      style: context.textTheme.headlineSmall!
+                          .copyWith(fontSize: 18),
                     ),
-                    Text(
-                      item.estimationTime!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                      style:
-                          context.textTheme.bodyMedium!.copyWith(fontSize: 11),
-                    ),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Estimasi: ',
+                            style: context.textTheme.bodyMedium!
+                                .copyWith(fontSize: 11),
+                          ),
+                          TextSpan(
+                            text: item.estimationTime!,
+                            style: context.textTheme.bodyMedium!.copyWith(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                    // Text(
+                    //   item.estimationTime!,
+                    //   maxLines: 1,
+                    //   overflow: TextOverflow.ellipsis,
+                    //   softWrap: false,
+                    //   style:
+                    //       context.textTheme.bodyMedium!.copyWith(fontSize: 11),
+                    // ),
                   ],
                 ),
-                Dimens.vSpaceTiny,
+                Dimens.vSpaceMedium,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      item.quantity.toString(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                      style: context.textTheme.titleMedium,
+                    Spacer(
+                      flex: 3,
                     ),
-                    Text(
-                      item.items.toString(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                      style:
-                          context.textTheme.bodyMedium!.copyWith(fontSize: 11),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: item.quantity.toString(),
+                            style: context.textTheme.bodyMedium!.copyWith(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' ITEMS',
+                            style: context.textTheme.bodyMedium!.copyWith(
+                              fontSize: 15,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Spacer(
+                      flex: 1,
+                    ),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: item.items.toString(),
+                            style: context.textTheme.bodyMedium!.copyWith(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' QC',
+                            style: context.textTheme.bodyMedium!.copyWith(
+                              fontSize: 15,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ],
-                ),
-                Divider(
-                  thickness: 1.5,
-                  indent: 0.0,
                 ),
               ],
             ),

@@ -4,7 +4,9 @@ import 'package:boilerplate/domain/entity/container/container_data_list.dart';
 import 'package:boilerplate/domain/entity/container/container_detail.dart';
 import 'package:boilerplate/domain/usecase/container/get_container_detail_usecase.dart';
 import 'package:boilerplate/domain/usecase/container/get_container_usecase.dart';
+import 'package:boilerplate/utils/conversion/conversion.dart';
 import 'package:boilerplate/utils/dio/dio_error_util.dart';
+import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 
 part 'container_store.g.dart';
@@ -30,17 +32,20 @@ abstract class _ContainerStore with Store {
 
   //store variables
   @observable
-  ContainerDataList? containerDataList;
+  ContainerListData? containerDataList;
+
+  @observable
+  List<ContainerDataUiModel?> containerDataUiModel = <ContainerDataUiModel>[];
 
   @observable
   ContainerDetailModel? containerDetailModel;
 
-  static ObservableFuture<ContainerDataList?> emptyContainerResponse =
+  static ObservableFuture<ContainerListData?> emptyContainerResponse =
       ObservableFuture.value(null);
 
   @observable
   ObservableFuture<dynamic> fetchContainerFuture =
-      ObservableFuture<ContainerDataList?>(emptyContainerResponse);
+      ObservableFuture<ContainerListData?>(emptyContainerResponse);
 
   @computed
   bool get loading => fetchContainerFuture.status == FutureStatus.pending;
@@ -52,8 +57,21 @@ abstract class _ContainerStore with Store {
 
     future.then((containerDataList) {
       this.containerDataList = containerDataList;
+      this.containerDataUiModel = containerDataList.content.map((e) {
+        return ContainerDataUiModel(
+          containerNumber: e.history!.packing!.containerNoInternal,
+          items: e.product!.length,
+          quantity: e.history!.packing!.history[0].receivedQc,
+          dateTime: formatDateToString(e.createdAt),
+        );
+      }).toList();
+
     }).catchError((err) {
-      errorStore.errorMessage = DioErrorUtil.handleError(err);
+      if (err.runtimeType == DioException) {
+        errorStore.errorMessage = DioErrorUtil.handleError(err);
+      } else if (err.runtimeType == TypeError) {
+        errorStore.errorMessage = err.toString();
+      }
     });
   }
 
@@ -63,10 +81,40 @@ abstract class _ContainerStore with Store {
 
     future.then((containerDetail) {
       this.containerDetailModel = containerDetail;
-      print(containerDetailModel!.receiptList!.length.toString());
     }).catchError((err) {
       print(err);
       errorStore.errorMessage = DioErrorUtil.handleError(err);
     });
+  }
+}
+
+class ContainerDataUiModel {
+  String? containerNumber;
+  int? items;
+  int? quantity;
+  String? dateTime;
+
+  ContainerDataUiModel(
+      {required this.containerNumber,
+      required this.items,
+      required this.quantity,
+      required this.dateTime});
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'containerNumber': containerNumber,
+      'items': items,
+      'quantity': quantity,
+      'dateTime': dateTime,
+    };
+  }
+
+  factory ContainerDataUiModel.fromMap(Map<String, dynamic> map) {
+    return ContainerDataUiModel(
+      containerNumber: map['containerNumber'] as String,
+      items: map['items'] as int,
+      quantity: map['quantity'] as int,
+      dateTime: map['dateTime'] as String,
+    );
   }
 }

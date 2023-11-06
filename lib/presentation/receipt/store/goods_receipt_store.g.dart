@@ -64,13 +64,28 @@ mixin _$GoodsReceiptStore on _GoodsReceiptStore, Store {
     });
   }
 
+  late final _$packingReceiveListAtom =
+      Atom(name: '_GoodsReceiptStore.packingReceiveList', context: context);
+
+  @override
+  List<PackingReceiveModel> get packingReceiveList {
+    _$packingReceiveListAtom.reportRead();
+    return super.packingReceiveList;
+  }
+
+  @override
+  set packingReceiveList(List<PackingReceiveModel> value) {
+    _$packingReceiveListAtom.reportWrite(value, super.packingReceiveList, () {
+      super.packingReceiveList = value;
+    });
+  }
+
   late final _$getPostsAsyncAction =
       AsyncAction('_GoodsReceiptStore.getPosts', context: context);
 
   @override
-  ObservableFuture<dynamic> getPosts() {
-    return ObservableFuture<dynamic>(
-        _$getPostsAsyncAction.run(() => super.getPosts()));
+  Future<dynamic> getPosts() {
+    return _$getPostsAsyncAction.run(() => super.getPosts());
   }
 
   @override
@@ -79,6 +94,7 @@ mixin _$GoodsReceiptStore on _GoodsReceiptStore, Store {
 fetchPostsFuture: ${fetchPostsFuture},
 goodsReceiptData: ${goodsReceiptData},
 success: ${success},
+packingReceiveList: ${packingReceiveList},
 loading: ${loading}
     ''';
   }

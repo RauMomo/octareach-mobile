@@ -74,7 +74,10 @@ abstract class _UserStore with Store {
       reaction((_) => success, (_) => success.value = false, delay: 200),
       reaction((_) => this.isLoggedIn, (p0) async {
         await getLoginInfo();
-      })
+      }),
+      // reaction((_) => this.formErrorStore, (p0) async {
+      //   this
+      // }),
     ];
   }
 
@@ -138,13 +141,10 @@ abstract class _UserStore with Store {
       await _saveAccessTokenUseCase.call(params: value!.accessToken);
       await _saveProfileUseCase.call(params: value);
 
-      debugPrint('oke' + this.isRememberMe.toString());
-
       if (this.isRememberMe == true) {
         await _saveLoginInfoUseCase.call(params: loginParams);
       }
     }).catchError((e) {
-      print('error');
       if (e.runtimeType.toString() != "_TypeError") {
         flushbar = FlushbarHelper.createError(
           title: e.message,

@@ -2,7 +2,6 @@ import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/domain/entity/upcoming/upcoming_container_list.dart';
 import 'package:boilerplate/domain/usecase/upcoming/get_upcoming_container_usecase.dart';
 import 'package:boilerplate/utils/dio/dio_error_util.dart';
-import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
 part 'upcoming_container_store.g.dart';
@@ -37,7 +36,7 @@ abstract class _UpcomingContainerStore with Store {
   bool get isLoading => _isLoading;
 
   //general methods
-  Future fetchUpcomingContainer(BuildContext context) async {
+  Future fetchUpcomingContainer() async {
     final future = getUpcomingContainerUseCase.call(params: null);
     fetchContainerFuture = ObservableFuture(future);
 

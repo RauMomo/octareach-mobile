@@ -21,22 +21,56 @@ class UserApi {
   Future<UserInfoResponse> login(LoginParams params) async {
     late UserInfoResponse userRes;
 
-    await _dioClient.postData(_loginUrl, params.toMap()).then((res) {
-      if (res.statusCode == 200) {
-        userRes = UserInfoResponse.fromJson(res.data);
-        print('from api: ${userRes.data!.accessToken}');
-        // _dioClient.dio.options.headers
-        //     .addAll({'Authorization': 'Bearer ${userRes.data!.accessToken}'});
+    try {
+      final client = await _dioClient.postData(
+        _loginUrl,
+        params.toMap(),
+      );
+
+      if (client.statusCode == 200) {
+        return UserInfoResponse.fromJson(client.data);
       } else {
-        var message = res.data['message'];
         throw DioException(
-          message: message,
-          response: res.data,
+          message: client.data['message'],
           requestOptions: RequestOptions(),
         );
       }
-    });
+    } on DioException catch (ex) {
+      switch (ex.type) {
+        case DioExceptionType.connectionTimeout:
+          throw Exception('Connection timeout');
+        case DioExceptionType.sendTimeout:
+          throw Exception('Send Connection timeout');
+        case DioExceptionType.receiveTimeout:
+          throw Exception('Receive Connection timeout');
+        case DioExceptionType.badCertificate:
+          throw Exception('Bad Certificate Issue');
+        case DioExceptionType.badResponse:
+          throw Exception('Bad Response');
+        case DioExceptionType.cancel:
+          throw Exception('Cancel Exception');
+        case DioExceptionType.connectionError:
+          throw Exception('Connection Error');
+        case DioExceptionType.unknown:
+          throw Exception('Unknown Error');
+      }
+    }
+    // await _dioClient.postData(_loginUrl, params.toMap()).then((res) {
+    //   if (res.statusCode == 200) {
+    //     userRes = UserInfoResponse.fromJson(res.data);
+    //     print('from api: ${userRes.data!.accessToken}');
+    //     // _dioClient.dio.options.headers
+    //     //     .addAll({'Authorization': 'Bearer ${userRes.data!.accessToken}'});
+    //   } else {
+    //     var message = res.data['message'];
+    //     throw DioException(
+    //       message: message,
+    //       response: res.data,
+    //       requestOptions: RequestOptions(),
+    //     );
+    //   }
+    // });
 
-    return userRes;
+    // return userRes;
   }
 }

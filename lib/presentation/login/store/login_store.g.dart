@@ -15,6 +15,22 @@ mixin _$UserStore on _UserStore, Store {
   bool get isLoading => (_$isLoadingComputed ??=
           Computed<bool>(() => super.isLoading, name: '_UserStore.isLoading'))
       .value;
+  Computed<TextEditingController>? _$userEmailControllerComputed;
+
+  @override
+  TextEditingController get userEmailController =>
+      (_$userEmailControllerComputed ??= Computed<TextEditingController>(
+              () => super.userEmailController,
+              name: '_UserStore.userEmailController'))
+          .value;
+  Computed<TextEditingController>? _$passwordControllerComputed;
+
+  @override
+  TextEditingController get passwordController =>
+      (_$passwordControllerComputed ??= Computed<TextEditingController>(
+              () => super.passwordController,
+              name: '_UserStore.passwordController'))
+          .value;
 
   late final _$isLoggedInAtom =
       Atom(name: '_UserStore.isLoggedIn', context: context);
@@ -45,6 +61,37 @@ mixin _$UserStore on _UserStore, Store {
   set isRememberMe(bool value) {
     _$isRememberMeAtom.reportWrite(value, super.isRememberMe, () {
       super.isRememberMe = value;
+    });
+  }
+
+  late final _$emailAtom = Atom(name: '_UserStore.email', context: context);
+
+  @override
+  String get email {
+    _$emailAtom.reportRead();
+    return super.email;
+  }
+
+  @override
+  set email(String value) {
+    _$emailAtom.reportWrite(value, super.email, () {
+      super.email = value;
+    });
+  }
+
+  late final _$passwordAtom =
+      Atom(name: '_UserStore.password', context: context);
+
+  @override
+  String get password {
+    _$passwordAtom.reportRead();
+    return super.password;
+  }
+
+  @override
+  set password(String value) {
+    _$passwordAtom.reportWrite(value, super.password, () {
+      super.password = value;
     });
   }
 
@@ -108,10 +155,14 @@ mixin _$UserStore on _UserStore, Store {
     return '''
 isLoggedIn: ${isLoggedIn},
 isRememberMe: ${isRememberMe},
+email: ${email},
+password: ${password},
 success: ${success},
 flushbar: ${flushbar},
 loginFuture: ${loginFuture},
-isLoading: ${isLoading}
+isLoading: ${isLoading},
+userEmailController: ${userEmailController},
+passwordController: ${passwordController}
     ''';
   }
 }

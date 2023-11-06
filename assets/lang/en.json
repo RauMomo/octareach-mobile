@@ -15,10 +15,13 @@
   "home_start": "Below are list of strings for home",
   "home_shipment": "Product Shipment",
   "home_container": "Container Data",
+  "home_upcoming_shipment": "Upcoming Container",
   "home_container_detail": "Container",
   "home_tv_error": "Error",
   "home_tv_no_post_found": "No receive found",
   "home_tv_choose_language": "Choose Language",
-  "home_end": "-------------------------------------------------------------------------------------"
-
+  "home_end": "-------------------------------------------------------------------------------------",
+  "add_receipt": "Add Product Receipt",
+  "home_profile": "Profile",
+  "empty_container": "'No container arrived yet"
 }

@@ -24,7 +24,7 @@ class GoodsReceiptRepositoryImpl extends GoodsReceiptRepository {
     // check to see if posts are present in database, then fetch from database
     // else make a network call to get all posts, store them into database for
     // later use
-    return await _receiptApi.getPosts().then((receiptData) {
+    return await _receiptApi.getPackingReceive().then((receiptData) {
       receiptData.content.forEach((post) {
         _receiptDataSource.insert(post);
       });

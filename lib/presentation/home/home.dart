@@ -5,7 +5,9 @@ import 'package:boilerplate/presentation/container/container_data_list_view.dart
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/profile/profile_screen.dart';
+import 'package:boilerplate/presentation/receipt/add_receipt/add_goods_receipt_screen.dart';
 import 'package:boilerplate/presentation/receipt/goods_receipt_list_view.dart';
+import 'package:boilerplate/presentation/upcoming/upcoming_container_list_view.dart';
 import 'package:boilerplate/utils/conversion/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -24,8 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> allPages = [
     ReceiptListScreen(),
     ContainerDataListScreen(),
-    Text('Ini halaman tambah data'),
-    Text('Ini halaman upcoming'),
+    AddProductReceiptScreen(),
+    UpcomingContainerListView(),
     ProfileScreen()
   ];
 
@@ -58,9 +60,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _buildBottomNavigationBar() {
     final locale = context.appLocale;
-    return Observer(
-      builder: (context) => BottomAppBar(
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
+    return BottomAppBar(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
           Expanded(
             flex: 5,
             child: InkWell(
@@ -78,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 24,
                     ),
                     Text(
-                      locale.translate("misc_profile"),
+                      locale.translate("misc_receipt"),
                       style: context.textTheme.labelSmall,
                       textAlign: TextAlign.center,
                     ),
@@ -199,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-        ]),
+        ],
       ),
     );
   }

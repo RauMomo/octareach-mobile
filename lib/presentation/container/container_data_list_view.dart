@@ -1,7 +1,9 @@
 import 'package:boilerplate/constants/dimens.dart';
+import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/search_filter.dart';
-import 'package:boilerplate/domain/entity/container/container_data.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/container/detail/container_data_detail_view.dart';
+import 'package:boilerplate/presentation/container/store/container_store.dart';
 import 'package:boilerplate/utils/conversion/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -14,34 +16,14 @@ class ContainerDataListScreen extends StatefulWidget {
 
 class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
   //stores:---------------------------------------------------------------------
-
-  late final List<ContainerData> containerList;
+  final ContainerStore _containerStore = getIt<ContainerStore>();
 
   @override
-  void initState() {
-    containerList = [
-      ContainerData(
-          containerNumber: 'F020',
-          dateTime: 'Friday, 02-05-2023 16:45',
-          items: 4,
-          quantity: 30),
-      ContainerData(
-          containerNumber: 'F019',
-          dateTime: 'Friday, 02-05-2023 16:45',
-          items: 8,
-          quantity: 30),
-      ContainerData(
-          containerNumber: 'F018',
-          dateTime: 'Friday, 02-05-2023 16:45',
-          items: 4,
-          quantity: 30),
-      ContainerData(
-          containerNumber: 'F017',
-          dateTime: 'Friday, 02-05-2023 16:45',
-          items: 2,
-          quantity: 30),
-    ];
-    super.initState();
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    if (!_containerStore.loading) {
+      _containerStore.getContainerList();
+    }
   }
 
   @override
@@ -57,7 +39,7 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
       title: Column(
         children: [
           Text(
-            locale.translate('home_container'),
+            locale.translate('misc_container'),
           ),
         ],
       ),
@@ -90,23 +72,34 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
   Widget _buildMainContent() {
     return Observer(
       builder: (context) {
-        return Material(child: _buildListView());
+        return _containerStore.loading
+            ? CustomProgressIndicatorWidget()
+            : Material(child: _buildListView());
       },
     );
   }
 
   Widget _buildListView() {
+    final containerList = _containerStore.containerDataUiModel;
     final locale = context.appLocale;
-    return ListView.builder(
-      itemCount: containerList.length,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: _buildListItem(index),
-        );
-      },
-    );
+    return containerList.isEmpty
+        ? Center(
+            child: Text(
+              locale.translate(
+                'empty_container',
+              ),
+            ),
+          )
+        : ListView.builder(
+            itemCount: containerList.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: _buildListItem(index),
+              );
+            },
+          );
     // return ListView.separated(
     //   padding: EdgeInsets.symmetric(vertical: 16),
     //   itemCount: _goodsStore.goodsReceiptList!.goods!.length,
@@ -123,7 +116,8 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
   }
 
   Widget _buildListItem(int position) {
-    var item = containerList[position];
+    final containerList = _containerStore.containerDataUiModel;
+    final item = containerList[position];
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.0),
       child: Container(
@@ -167,7 +161,7 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      item.containerNumber!,
+                      item!.containerNumber!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,

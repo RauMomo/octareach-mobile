@@ -1,5 +1,7 @@
 import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/constants/strings.dart';
+import 'package:boilerplate/core/stores/global/global_variables.dart';
+import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -20,6 +22,7 @@ class MyApp extends StatelessWidget {
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final LanguageStore _languageStore = getIt<LanguageStore>();
   final UserStore _userStore = getIt<UserStore>();
+  final GlobalVariables _globalVariables = getIt<GlobalVariables>();
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +49,12 @@ class MyApp extends StatelessWidget {
             // Built-in localization of basic text for Cupertino widgets
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: _userStore.isLoggedIn ? HomeScreen() : LoginScreen(),
+          home: Scaffold(
+            key: _globalVariables.scaffoldKey,
+            appBar: EmptyAppBar(),
+            extendBodyBehindAppBar: true,
+            body: _userStore.isLoggedIn ? HomeScreen() : LoginScreen(),
+          ),
         );
       },
     );

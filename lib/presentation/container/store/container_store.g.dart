@@ -20,15 +20,32 @@ mixin _$ContainerStore on _ContainerStore, Store {
       Atom(name: '_ContainerStore.containerDataList', context: context);
 
   @override
-  ContainerDataList? get containerDataList {
+  ContainerListData? get containerDataList {
     _$containerDataListAtom.reportRead();
     return super.containerDataList;
   }
 
   @override
-  set containerDataList(ContainerDataList? value) {
+  set containerDataList(ContainerListData? value) {
     _$containerDataListAtom.reportWrite(value, super.containerDataList, () {
       super.containerDataList = value;
+    });
+  }
+
+  late final _$containerDataUiModelAtom =
+      Atom(name: '_ContainerStore.containerDataUiModel', context: context);
+
+  @override
+  List<ContainerDataUiModel?> get containerDataUiModel {
+    _$containerDataUiModelAtom.reportRead();
+    return super.containerDataUiModel;
+  }
+
+  @override
+  set containerDataUiModel(List<ContainerDataUiModel?> value) {
+    _$containerDataUiModelAtom.reportWrite(value, super.containerDataUiModel,
+        () {
+      super.containerDataUiModel = value;
     });
   }
 
@@ -70,6 +87,7 @@ mixin _$ContainerStore on _ContainerStore, Store {
   String toString() {
     return '''
 containerDataList: ${containerDataList},
+containerDataUiModel: ${containerDataUiModel},
 containerDetailModel: ${containerDetailModel},
 fetchContainerFuture: ${fetchContainerFuture},
 loading: ${loading}

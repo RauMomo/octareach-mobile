@@ -14,4 +14,7 @@ class Assets {
   static const String shipmentIcon =
       "assets/svg/navbar/water_transportation.svg";
   static const String profileIcon = "assets/svg/navbar/account.svg";
+
+  //global
+  static const String noInternetIcon = "assets/images/no_internet.png";
 }

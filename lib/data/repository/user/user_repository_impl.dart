@@ -32,8 +32,6 @@ class UserRepositoryImpl extends UserRepository {
       _sharedPrefsHelper.saveIsLoggedIn(value);
 
   Future<void> saveLoginInfo(LoginParams params) async {
-    print('uha' + params.password);
-    print('ahu' + params.username);
     _sharedPrefsHelper.saveEmail(params.username);
     _sharedPrefsHelper.savePassword(params.password);
   }

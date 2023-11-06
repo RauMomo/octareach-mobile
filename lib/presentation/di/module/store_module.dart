@@ -6,7 +6,9 @@ import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/usecase/container/get_container_detail_usecase.dart';
 import 'package:boilerplate/domain/usecase/container/get_container_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/logout_account_usecase.dart';
+import 'package:boilerplate/domain/usecase/receipt/add_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/get_receipt_usecase.dart';
+import 'package:boilerplate/domain/usecase/upcoming/get_upcoming_container_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_login_info_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
@@ -19,7 +21,9 @@ import 'package:boilerplate/presentation/home/store/language/language_store.dart
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/store/profile_store.dart';
+import 'package:boilerplate/presentation/receipt/add_receipt/store/add_goods_receipt_store.dart';
 import 'package:boilerplate/presentation/receipt/store/goods_receipt_store.dart';
+import 'package:boilerplate/presentation/upcoming/store/upcoming_container_store.dart';
 
 import '../../../di/service_locator.dart';
 
@@ -52,9 +56,23 @@ mixin StoreModule {
       ),
     );
 
+    getIt.registerSingleton<AddGoodsReceiptStore>(
+      AddGoodsReceiptStore(
+        getIt<AddGoodsReceiptUseCase>(),
+        getIt<ErrorStore>(),
+      ),
+    );
+
     getIt.registerSingleton<ContainerStore>(
       ContainerStore(getIt<GetContainerUseCase>(),
           getIt<GetContainerDetailUseCase>(), getIt<ErrorStore>()),
+    );
+
+    getIt.registerSingleton<UpcomingContainerStore>(
+      UpcomingContainerStore(
+        getUpcomingContainerUseCase: getIt<GetUpcomingContainerUseCase>(),
+        errorStore: getIt<ErrorStore>(),
+      ),
     );
 
     getIt.registerSingleton<ProfileStore>(

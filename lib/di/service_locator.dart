@@ -7,6 +7,7 @@ final getIt = GetIt.instance;
 
 mixin ServiceLocator {
   static Future<void> configureDependencies() async {
+    await GlobalLayerInjection.configureGlobalLayerInjection();
     await DataLayerInjection.configureDataLayerInjection();
     await DomainLayerInjection.configureDomainLayerInjection();
     await PresentationLayerInjection.configurePresentationLayerInjection();

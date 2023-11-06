@@ -10,11 +10,14 @@ class ThemeStore = _ThemeStore with _$ThemeStore;
 abstract class _ThemeStore with Store {
   final String TAG = "_ThemeStore";
 
-  // repository instance
+// repository instance
   final SettingRepository _repository;
 
   // store for handling errors
   final ErrorStore errorStore;
+
+  //scaffold key for showing
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   // store variables:-----------------------------------------------------------
   @observable

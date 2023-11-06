@@ -20,8 +20,8 @@ class ContainerDataSource {
   ContainerDataSource(this._sembastClient);
 
   // DB functions:--------------------------------------------------------------
-  Future<int> insert(ContainerData data) async {
-    return await _containerStore.add(_sembastClient.database, data.toMap());
+  Future<int> insert(ContainerListContent data) async {
+    return await _containerStore.add(_sembastClient.database, data.toJson());
   }
 
   Future<int> count() async {
@@ -54,9 +54,9 @@ class ContainerDataSource {
     // }).toList();
   }
 
-  Future<ContainerDataList> getPostsFromDb() async {
+  Future<List<ContainerListContent>> getPostsFromDb() async {
     // post list
-    var goodsList;
+    var containerList;
 
     // fetching data
     final recordSnapshots = await _containerStore.find(
@@ -65,15 +65,15 @@ class ContainerDataSource {
 
     // Making a List<Post> out of List<RecordSnapshot>
     if (recordSnapshots.length > 0) {
-      goodsList = ContainerDataList(
-          containerList: recordSnapshots.map((snapshot) {
-        // var index = recordSnapshots.indexOf(snapshot);
-        final data = ContainerData.fromMap(snapshot.value);
-        return data;
-      }).toList());
+      containerList = recordSnapshots.map((snapshot) {
+        final container = ContainerListContent.fromJson(snapshot.value);
+        container.id = snapshot.key.toString();
+
+        return container;
+      }).toList();
     }
 
-    return goodsList;
+    return containerList;
   }
 
   Future<int> update(ContainerData data) async {

@@ -7,11 +7,13 @@ import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/domain/usecase/container/get_container_detail_usecase.dart';
 import 'package:boilerplate/domain/usecase/container/get_container_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/logout_account_usecase.dart';
+import 'package:boilerplate/domain/usecase/receipt/add_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/delete_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/find_receipt_by_id_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/get_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/insert_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/update_receipt_usecase.dart';
+import 'package:boilerplate/domain/usecase/upcoming/get_upcoming_container_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_login_info_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
@@ -59,6 +61,9 @@ mixin UseCaseModule {
     getIt.registerSingleton<InsertGoodsReceiptUseCase>(
       InsertGoodsReceiptUseCase(getIt<GoodsReceiptRepository>()),
     );
+    getIt.registerSingleton<AddGoodsReceiptUseCase>(
+      AddGoodsReceiptUseCase(getIt<GoodsReceiptRepository>()),
+    );
     getIt.registerSingleton<UpdateReceiptUseCase>(
       UpdateReceiptUseCase(getIt<GoodsReceiptRepository>()),
     );
@@ -73,6 +78,10 @@ mixin UseCaseModule {
 
     getIt.registerSingleton<GetContainerDetailUseCase>(
       GetContainerDetailUseCase(getIt<ContainerRepository>()),
+    );
+
+    getIt.registerSingleton<GetUpcomingContainerUseCase>(
+      GetUpcomingContainerUseCase(getIt<ContainerRepository>()),
     );
 
     // container:--------------------------------------------------------------------

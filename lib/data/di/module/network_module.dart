@@ -10,6 +10,7 @@ import 'package:boilerplate/data/network/interceptors/error_interceptor.dart';
 import 'package:boilerplate/data/network/rest_client.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:event_bus/event_bus.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../../di/service_locator.dart';
 
@@ -21,6 +22,15 @@ mixin NetworkModule {
     // interceptors:------------------------------------------------------------
     getIt.registerSingleton<LoggingInterceptor>(LoggingInterceptor());
     getIt.registerSingleton<ErrorInterceptor>(ErrorInterceptor(getIt()));
+    getIt.registerSingleton<PrettyDioLogger>(
+      PrettyDioLogger(
+          compact: true,
+          request: true,
+          requestBody: true,
+          error: true,
+          responseBody: true,
+          responseHeader: true),
+    );
     getIt.registerSingleton<AuthInterceptor>(
       AuthInterceptor(
         accessToken: () async =>
@@ -40,12 +50,15 @@ mixin NetworkModule {
       ),
     );
     getIt.registerSingleton<DioClient>(
-      DioClient(dioConfigs: getIt())
-        ..addInterceptors(
+      DioClient(
+        prefs: getIt<SharedPreferenceHelper>(),
+        dioConfigs: getIt(),
+      )..addInterceptors(
           [
             getIt<AuthInterceptor>(),
             getIt<ErrorInterceptor>(),
             getIt<LoggingInterceptor>(),
+            getIt<PrettyDioLogger>(),
           ],
         ),
     );

@@ -85,7 +85,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
     return _goodsStore.goodsReceiptData != null
         ? ListView.separated(
             padding: EdgeInsets.symmetric(vertical: 16),
-            itemCount: _goodsStore.goodsReceiptData!.content[0].product.length,
+            itemCount: _goodsStore.packingReceiveList.length,
             separatorBuilder: (context, position) {
               return Divider();
             },
@@ -104,7 +104,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
   }
 
   Widget _buildListItem(int position) {
-    var item = _goodsStore.goodsReceiptData!.content[0].product[position];
+    var item = _goodsStore.packingReceiveList[position];
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.0),
       child: Container(
@@ -180,7 +180,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      item.status,
+                      item.markingNumber,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -188,7 +188,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                           context.textTheme.bodyMedium!.copyWith(fontSize: 11),
                     ),
                     Text(
-                      item.updatedAt.toString(),
+                      item.createdAt.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -202,14 +202,14 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      item.receiveId,
+                      item.receiveNote,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
                       style: context.textTheme.titleMedium,
                     ),
                     Text(
-                      item.receiveId,
+                      item.containerNoInternal,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -223,7 +223,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      item.name,
+                      item.product,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -233,7 +233,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                              text: item.qc.toString(),
+                              text: item.quantity.toString(),
                               style: context.textTheme.titleMedium!
                                   .copyWith(fontWeight: FontWeight.bold)),
                           TextSpan(
@@ -241,13 +241,6 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                         ],
                       ),
                     )
-                    // Text(
-                    //   '${item.quantity.toString()} QC',
-                    //   maxLines: 1,
-                    //   overflow: TextOverflow.ellipsis,
-                    //   softWrap: false,
-                    //   style: context.textTheme.titleMedium,
-                    // ),
                   ],
                 ),
                 Divider(

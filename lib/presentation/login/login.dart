@@ -121,15 +121,15 @@ class _LoginScreenState extends State<LoginScreen> {
           icon: Icons.person,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _userStore.userEmailController,
-          inputAction: TextInputAction.next,
+          inputAction: TextInputAction.none,
           autoFocus: false,
           onChanged: (value) {
-            _formStore.setUserId(_userStore.userEmailController.text);
+            _formStore.validateUserEmail(value);
           },
-          onFieldSubmitted: (value) {
-            FocusScope.of(context).requestFocus(_passwordFocusNode);
-          },
-          errorText: _formStore.formErrorStore.userEmail,
+          // onFieldSubmitted: (value) {
+          //   FocusScope.of(context).requestFocus(_passwordFocusNode);
+          // },
+          errorText: _userStore.formErrorStore.userEmail,
         );
       },
     );
@@ -143,13 +143,14 @@ class _LoginScreenState extends State<LoginScreen> {
           hint: locale.translate('login_et_user_password'),
           isObscure: true,
           padding: EdgeInsets.only(top: 16.0),
+          inputAction: TextInputAction.none,
           icon: Icons.lock,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _userStore.passwordController,
-          focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password,
+          // focusNode: _passwordFocusNode,
+          errorText: _userStore.formErrorStore.password,
           onChanged: (value) {
-            _formStore.setPassword(_userStore.passwordController.text);
+            _formStore.validatePassword(value);
           },
         );
       },
@@ -165,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
         contentPadding: EdgeInsets.zero,
         dense: true,
         checkColor: Colors.white,
-        fillColor: MaterialStateProperty.all(AppColors.successColor),
+        activeColor: AppColors.successColor,
         title: Transform.translate(
           offset: Offset(-Dimens.horizontal_padding, 0),
           child: Text(
@@ -190,6 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
         print('in page' + _formStore.userEmail.toString());
         print('in page' + _formStore.password.toString());
 
+        _formStore.validateAll();
         if (_formStore.canLogin) {
           DeviceUtils.hideKeyboard(context);
           _userStore.login(_userStore.userEmailController.text,
