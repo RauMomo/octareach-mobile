@@ -6,6 +6,11 @@ import 'package:flutter/material.dart';
 
 class SearchFilter extends StatelessWidget {
   final TextEditingController _searchController = new TextEditingController();
+
+  final void Function(dynamic) onSearchMode;
+
+  SearchFilter({super.key, required this.onSearchMode});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -15,9 +20,9 @@ class SearchFilter extends StatelessWidget {
           TextField(
             controller: _searchController,
             onChanged: (String value) {
-              if (value.length >= 3)
+              if (value.length >= 2)
                 debouncer(() {
-                  print('searcing data');
+                  onSearchMode.call(value);
                 });
             },
             autofocus: false,
@@ -38,9 +43,9 @@ class SearchFilter extends StatelessWidget {
               suffixIcon: IconButton(
                 icon: Icon(Icons.search, color: AppColors.subtitleColor),
                 onPressed: () {
-                  if (_searchController.text.length >= 3)
+                  if (_searchController.text.length >= 2)
                     debouncer(() {
-                      print('searcing data');
+                      onSearchMode.call(_searchController.text);
                     });
                 },
               ),

@@ -25,5 +25,6 @@
   "home_end": "-------------------------------------------------------------------------------------",
   "add_receipt": "Tambah Penerimaan Barang",
   "home_profile": "Profil",
-  "empty_container": "Belum ada barang yang tersedia"
+  "empty_container": "Belum ada barang yang tersedia",
+  "success_delete": "Sukses menghapus data"
 }

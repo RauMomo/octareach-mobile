@@ -23,5 +23,6 @@
   "home_end": "-------------------------------------------------------------------------------------",
   "add_receipt": "Add Product Receipt",
   "home_profile": "Profile",
-  "empty_container": "'No container arrived yet"
+  "empty_container": "'No container arrived yet",
+  "success_delete": "Successfully delete data"
 }

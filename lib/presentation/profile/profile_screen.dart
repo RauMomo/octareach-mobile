@@ -35,7 +35,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_profileStore.loading) {
+      print('kepanggil ga?');
+      _profileStore.getProfileInfo();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print(_profileStore.profile.email);
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
@@ -69,11 +79,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Wrap(
             runSpacing: 10.0,
             children: [
-              ReadOnlyTextFieldWidget(_profileStore.profile.email, Icons.email),
               ReadOnlyTextFieldWidget(
-                  _profileStore.profile.address, Icons.location_on_sharp),
+                _profileStore.profile.email,
+                icon: Icons.email,
+                hintText: 'Email Here',
+              ),
               ReadOnlyTextFieldWidget(
-                  _profileStore.profile.phoneNumber, Icons.phone),
+                _profileStore.profile.address,
+                icon: Icons.location_on_sharp,
+                hintText: 'Location Here',
+              ),
+              ReadOnlyTextFieldWidget(
+                _profileStore.profile.phoneNumber,
+                icon: Icons.phone,
+                hintText: 'Phone Here',
+              ),
             ],
           ),
         ),

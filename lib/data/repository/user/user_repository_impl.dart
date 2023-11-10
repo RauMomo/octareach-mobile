@@ -46,6 +46,7 @@ class UserRepositoryImpl extends UserRepository {
 
   @override
   Future<void> saveProfile(UserInfo value) {
+    print('from repository: ${value.toJson()}');
     return _sharedPrefsHelper.saveProfile(
       value.convertToJson(),
     );

@@ -43,8 +43,7 @@ class DioClient {
           bool isConnected = await checkConnectivity();
           print(isConnected);
 
-          if (isConnected) {
-            print('asem');
+          if (!isConnected) {
             return handler.reject(
               DioException.connectionTimeout(
                 timeout: _dio.options.connectTimeout!,
@@ -134,27 +133,7 @@ class DioClient {
 
   noInternetWarning() async {
     var context = _globalVariables.scaffoldKey.currentContext!;
-    //     (context) {
-    //   return Column(
-    //     mainAxisSize: MainAxisSize.min,
-    //     children: [
-    //       Image.asset(Assets.noInternetIcon),
-    //       Text(
-    //         'Oops!',
-    //         style: context.textTheme.titleMedium,
-    //       ),
-    //       Text(
-    //         'No Internet Connection',
-    //         style: context.textTheme.titleMedium,
-    //       ),
-    //       Text(
-    //         'Please check your internet conenction and try again',
-    //         style: context.textTheme.bodyMedium,
-    //       ),
-    //     ],
-    //   );
-    // },
-    // backgroundColor: AppColors.backgroundColor,
+
     await showModalBottomSheet(
       context: context,
       isDismissible: true,

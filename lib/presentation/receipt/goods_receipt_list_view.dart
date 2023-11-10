@@ -4,6 +4,7 @@ import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/search_filter.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/receipt/store/goods_receipt_store.dart';
+import 'package:boilerplate/utils/conversion/conversion.dart';
 import 'package:boilerplate/utils/conversion/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -67,7 +68,9 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
   }
 
   _buildSearchFilter() {
-    return SearchFilter();
+    return SearchFilter(
+      onSearchMode: (query) {},
+    );
   }
 
   Widget _buildMainContent() {
@@ -152,24 +155,21 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                     'Hapus Data',
                     style: context.textTheme.bodySmall,
                   ),
-                  // onTap: () => onSelected,
+                  onTap: () {
+                    _buildModalConfirm(position);
+                  },
                 )
               ];
             },
             child: FractionallySizedBox(
               alignment: Alignment.center,
-              child: Icon(Icons.more_vert),
-              widthFactor: .1,
+              child: Transform.translate(
+                offset: Offset(-16.0, 0),
+                child: Icon(Icons.more_vert),
+              ),
+              widthFactor: .05,
             ),
           ),
-          // trailing: IconButton(
-          //   padding: EdgeInsets.only(bottom: Dimens.screenHeight(context)),
-          //   visualDensity: VisualDensity(vertical: -4, horizontal: -4),
-          //   onPressed: () {
-          //     PopU
-          //   },
-          //   icon: Icon(Icons.more_vert),
-          // ),
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Column(
@@ -188,7 +188,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                           context.textTheme.bodyMedium!.copyWith(fontSize: 11),
                     ),
                     Text(
-                      item.createdAt.toString(),
+                      item.createdAt,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -206,7 +206,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
-                      style: context.textTheme.titleMedium,
+                      style: context.textTheme.titleSmall,
                     ),
                     Text(
                       item.containerNoInternal,
@@ -287,6 +287,127 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
     });
 
     return SizedBox.shrink();
+  }
+
+  //modal popup
+  _buildModalConfirm(int pos) async {
+    final locale = context.appLocale;
+
+    await showModalBottomSheet<bool>(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          width: double.infinity,
+          height: 220,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(12),
+            ),
+            color: Colors.white,
+          ),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Menghapus Pengiriman',
+                  style: context.textTheme.bodyLarge!.copyWith(
+                    color: context.primary,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+              Divider(
+                color: hexToColor('#EAEAEA'),
+                thickness: 1.5,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Spacer(),
+                  Expanded(
+                    flex: 4,
+                    child: Text(
+                      'Apakah Anda yakin ingin menghapus pengiriman ini?',
+                      style: context.textTheme.bodyLarge!.copyWith(
+                        height: 1.4,
+                      ),
+                      textAlign: TextAlign.center,
+                      softWrap: true,
+                    ),
+                  ),
+                  Spacer(),
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 24, left: 18, right: 18),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      height: 36,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: context.primary,
+                          width: 2,
+                        ),
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        child: Text(
+                          'Tidak',
+                          style: context.textTheme.bodySmall!.copyWith(
+                            color: context.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 36,
+                      width: 150,
+                      child: TextButton(
+                        onPressed: () {
+                          _goodsStore.removeData(pos);
+                          Navigator.of(context).pop(true);
+                        },
+                        style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          backgroundColor: context.primary,
+                        ),
+                        child: Text(
+                          'Iya',
+                          style: context.textTheme.bodySmall!.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ).then((value) {
+      FlushbarHelper.createInformation(
+        message: locale.translate("success_delete"),
+        duration: Duration(seconds: 3),
+      )..show(context);
+      setState(() {});
+    });
   }
 }
 

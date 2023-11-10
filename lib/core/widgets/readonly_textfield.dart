@@ -1,5 +1,6 @@
 import 'package:boilerplate/utils/conversion/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class ReadOnlyTextFieldWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -7,19 +8,22 @@ class ReadOnlyTextFieldWidget extends StatelessWidget {
   final InputDecoration? decoration;
   final IconData? icon;
   final VoidCallback? onTap;
+  final String hintText;
 
   factory ReadOnlyTextFieldWidget(String value,
-      [IconData? icon,
+      {IconData? icon,
       InputDecoration? decoration,
       VoidCallback? onTap,
-      Key? key]) {
+      String? hintText,
+      Key? key}) {
     return ReadOnlyTextFieldWidget._(
       value: value,
       decoration: decoration,
       controller: TextEditingController(text: value),
       icon: icon,
       onTap: onTap,
-      key: Key.new(value),
+      hintText: hintText!,
+      key: Key.new(Uuid().v1()),
     );
   }
 
@@ -29,6 +33,7 @@ class ReadOnlyTextFieldWidget extends StatelessWidget {
       required this.controller,
       required this.icon,
       required this.onTap,
+      required this.hintText,
       required Key key})
       : super(key: key);
 
@@ -46,7 +51,7 @@ class ReadOnlyTextFieldWidget extends StatelessWidget {
             borderSide: BorderSide(width: 2.0, color: context.primary),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
-          hintText: 'Phone here',
+          hintText: hintText,
           prefixIcon: icon != null
               ? Padding(
                   padding: const EdgeInsetsDirectional.only(start: 12.0),

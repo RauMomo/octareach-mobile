@@ -4,8 +4,6 @@ import 'package:boilerplate/data/network/apis/container/container_api.dart';
 import 'package:boilerplate/domain/entity/container/container_data.dart';
 import 'package:boilerplate/domain/entity/container/container_data_list.dart';
 import 'package:boilerplate/domain/entity/container/container_detail.dart';
-import 'package:boilerplate/domain/entity/upcoming/upcoming_container.dart';
-import 'package:boilerplate/domain/entity/upcoming/upcoming_container_list.dart';
 import 'package:boilerplate/domain/repository/container/container_repository.dart';
 import 'package:sembast/sembast.dart';
 
@@ -25,55 +23,42 @@ class ContainerRepositoryImpl extends ContainerRepository {
       value.content.forEach((element) {
         _containerDataSource.insert(element);
       });
-
       return value;
     }).catchError((error) => throw error);
   }
 
   @override
-  Future<ContainerDetailModel> getContainerDetail() async {
+  Future<ContainerDetailModel> getContainerDetail(String id) async {
     return await _containerApi
-        .getContainerDetail()
+        .getContainerDetail(id)
         .then((value) => value)
         .catchError((err) => throw err);
   }
 
-  Future<List<ContainerData>> findContainerById(int id) {
+  Future<ContainerListContent> findContainerById(int id) {
     List<Filter> filters = [];
     Filter idTypeFilter = Filter.equals(DBConstants.FIELD_ID, id);
     filters.add(idTypeFilter);
 
     return _containerDataSource
         .getAllSortedByFilter(filters: filters)
-        .then((value) => value)
+        .then((value) => value.last)
         .catchError((error) => throw error);
   }
 
-  Future<UpcomingContainerList> getUpcomingContainerList() {
-    return Future.value(
-      UpcomingContainerList(
-        upcomingContainers: [
-          UpcomingContainer(
-              containerNumber: 'F021',
-              estimationTime: 'Monday, 05-05-2023 16:56',
-              items: 4,
-              quantity: 30),
-          UpcomingContainer(
-              containerNumber: 'F022',
-              estimationTime: 'Tuesday, 06-05-2023 16:56',
-              items: 8,
-              quantity: 30),
-          UpcomingContainer(
-              containerNumber: 'F023',
-              estimationTime: 'Wednesday, 07-05-2023 16:56',
-              items: 4,
-              quantity: 30),
-          UpcomingContainer(
-              containerNumber: 'F024',
-              estimationTime: 'Friday, 09-05-2023 16:56',
-              items: 2,
-              quantity: 30),
-        ],
+  Future<ContainerListData> getUpcomingContainerList() async {
+    final content = await _containerDataSource.getAllSortedByFilter(filters: [
+      Filter.equals('history.status', "waiting_for_stuffing"),
+    ]);
+    const perPage = 15;
+
+    return ContainerListData(
+      content: content,
+      pagination: Pagination(
+        currentPage: 1,
+        perPage: 15,
+        lastPage: (content.length / perPage).floor(),
+        total: content.length,
       ),
     );
   }

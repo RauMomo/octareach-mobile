@@ -37,6 +37,15 @@ class SharedPreferenceHelper {
     return _sharedPreference.setString(Preferences.profile, value);
   }
 
+  Future<String> getProfile() async {
+    try {
+      final str = _sharedPreference.getString(Preferences.profile);
+      return str!;
+    } catch (e) {
+      return '';
+    }
+  }
+
   Future<bool> saveEmail(String email) async {
     return _sharedPreference.setString(Preferences.email, email);
   }

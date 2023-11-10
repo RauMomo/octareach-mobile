@@ -5,10 +5,11 @@ import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/usecase/container/get_container_detail_usecase.dart';
 import 'package:boilerplate/domain/usecase/container/get_container_usecase.dart';
+import 'package:boilerplate/domain/usecase/container/get_upcoming_container_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/logout_account_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/add_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/get_receipt_usecase.dart';
-import 'package:boilerplate/domain/usecase/upcoming/get_upcoming_container_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_login_info_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
@@ -64,8 +65,11 @@ mixin StoreModule {
     );
 
     getIt.registerSingleton<ContainerStore>(
-      ContainerStore(getIt<GetContainerUseCase>(),
-          getIt<GetContainerDetailUseCase>(), getIt<ErrorStore>()),
+      ContainerStore(
+          getIt<GetContainerUseCase>(),
+          getIt<GetContainerDetailUseCase>(),
+          getIt<GetUpcomingContainerUseCase>(),
+          getIt<ErrorStore>()),
     );
 
     getIt.registerSingleton<UpcomingContainerStore>(
@@ -76,7 +80,11 @@ mixin StoreModule {
     );
 
     getIt.registerSingleton<ProfileStore>(
-        ProfileStore(getIt<LogoutAccountUseCase>()));
+      ProfileStore(
+        getIt<LogoutAccountUseCase>(),
+        getIt<GetProfileUseCase>(),
+      ),
+    );
 
     getIt.registerSingleton<ThemeStore>(
       ThemeStore(

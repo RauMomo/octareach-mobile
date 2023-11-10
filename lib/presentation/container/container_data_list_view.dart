@@ -50,6 +50,7 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
 
   // body methods:--------------------------------------------------------------
   Widget _buildBody() {
+    print('len' + _containerStore.containerDataUiModel.length.toString());
     return Column(
       children: [
         _buildSearchFilter(),
@@ -66,7 +67,12 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
   }
 
   _buildSearchFilter() {
-    return SearchFilter();
+    return SearchFilter(
+      onSearchMode: (query) {
+        _containerStore.detailQuery = query;
+        _containerStore.searchContainerData(query);
+      },
+    );
   }
 
   Widget _buildMainContent() {
@@ -74,7 +80,10 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
       builder: (context) {
         return _containerStore.loading
             ? CustomProgressIndicatorWidget()
-            : Material(child: _buildListView());
+            : Material(
+                child: !_containerStore.searching
+                    ? _buildListView()
+                    : _buildSearchListView());
       },
     );
   }
@@ -100,19 +109,29 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
               );
             },
           );
-    // return ListView.separated(
-    //   padding: EdgeInsets.symmetric(vertical: 16),
-    //   itemCount: _goodsStore.goodsReceiptList!.goods!.length,
-    //   separatorBuilder: (context, position) {
-    //     return Divider();
-    //   },
-    //   itemBuilder: (context, position) {
-    //     return Padding(
-    //       padding: EdgeInsets.symmetric(horizontal: 16),
-    //       child: _buildListItem(position),
-    //     );
-    //   },
-    // );
+  }
+
+  Widget _buildSearchListView() {
+    final containerList = _containerStore.filteredContainerDataUiModel;
+    final locale = context.appLocale;
+    return containerList.isEmpty
+        ? Center(
+            child: Text(
+              locale.translate(
+                'empty_container',
+              ),
+            ),
+          )
+        : ListView.builder(
+            itemCount: containerList.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: _buildListItem(index),
+              );
+            },
+          );
   }
 
   Widget _buildListItem(int position) {
@@ -140,6 +159,7 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
                 builder: (context) {
                   return ContainerDataDetailView(
                     containerName: item.containerNumber!,
+                    containerId: item.id!,
                   );
                 },
               ),
@@ -161,7 +181,7 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      item!.containerNumber!,
+                      'No. ' + item!.containerNumber!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -211,13 +231,6 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
                         ],
                       ),
                     )
-                    // Text(
-                    //   '${item.quantity.toString()} QC',
-                    //   maxLines: 1,
-                    //   overflow: TextOverflow.ellipsis,
-                    //   softWrap: false,
-                    //   style: context.textTheme.titleMedium,
-                    // ),
                   ],
                 ),
               ],

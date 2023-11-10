@@ -15,6 +15,20 @@ mixin _$ContainerStore on _ContainerStore, Store {
   bool get loading => (_$loadingComputed ??=
           Computed<bool>(() => super.loading, name: '_ContainerStore.loading'))
       .value;
+  Computed<bool>? _$searchingComputed;
+
+  @override
+  bool get searching =>
+      (_$searchingComputed ??= Computed<bool>(() => super.searching,
+              name: '_ContainerStore.searching'))
+          .value;
+  Computed<bool>? _$upcomingContainerLoadingComputed;
+
+  @override
+  bool get upcomingContainerLoading => (_$upcomingContainerLoadingComputed ??=
+          Computed<bool>(() => super.upcomingContainerLoading,
+              name: '_ContainerStore.upcomingContainerLoading'))
+      .value;
 
   late final _$containerDataListAtom =
       Atom(name: '_ContainerStore.containerDataList', context: context);
@@ -66,6 +80,71 @@ mixin _$ContainerStore on _ContainerStore, Store {
     });
   }
 
+  late final _$filteredContainerDetailModelAtom = Atom(
+      name: '_ContainerStore.filteredContainerDetailModel', context: context);
+
+  @override
+  ContainerDetailModel? get filteredContainerDetailModel {
+    _$filteredContainerDetailModelAtom.reportRead();
+    return super.filteredContainerDetailModel;
+  }
+
+  @override
+  set filteredContainerDetailModel(ContainerDetailModel? value) {
+    _$filteredContainerDetailModelAtom
+        .reportWrite(value, super.filteredContainerDetailModel, () {
+      super.filteredContainerDetailModel = value;
+    });
+  }
+
+  late final _$containerProductsAtom =
+      Atom(name: '_ContainerStore.containerProducts', context: context);
+
+  @override
+  List<PackingReceiveModel?> get containerProducts {
+    _$containerProductsAtom.reportRead();
+    return super.containerProducts;
+  }
+
+  @override
+  set containerProducts(List<PackingReceiveModel?> value) {
+    _$containerProductsAtom.reportWrite(value, super.containerProducts, () {
+      super.containerProducts = value;
+    });
+  }
+
+  late final _$upcomingContainersAtom =
+      Atom(name: '_ContainerStore.upcomingContainers', context: context);
+
+  @override
+  List<ContainerDataUiModel?> get upcomingContainers {
+    _$upcomingContainersAtom.reportRead();
+    return super.upcomingContainers;
+  }
+
+  @override
+  set upcomingContainers(List<ContainerDataUiModel?> value) {
+    _$upcomingContainersAtom.reportWrite(value, super.upcomingContainers, () {
+      super.upcomingContainers = value;
+    });
+  }
+
+  late final _$detailQueryAtom =
+      Atom(name: '_ContainerStore.detailQuery', context: context);
+
+  @override
+  String get detailQuery {
+    _$detailQueryAtom.reportRead();
+    return super.detailQuery;
+  }
+
+  @override
+  set detailQuery(String value) {
+    _$detailQueryAtom.reportWrite(value, super.detailQuery, () {
+      super.detailQuery = value;
+    });
+  }
+
   late final _$fetchContainerFutureAtom =
       Atom(name: '_ContainerStore.fetchContainerFuture', context: context);
 
@@ -83,14 +162,54 @@ mixin _$ContainerStore on _ContainerStore, Store {
     });
   }
 
+  late final _$fetchUpcomingContainerFutureAtom = Atom(
+      name: '_ContainerStore.fetchUpcomingContainerFuture', context: context);
+
+  @override
+  ObservableFuture<dynamic> get fetchUpcomingContainerFuture {
+    _$fetchUpcomingContainerFutureAtom.reportRead();
+    return super.fetchUpcomingContainerFuture;
+  }
+
+  @override
+  set fetchUpcomingContainerFuture(ObservableFuture<dynamic> value) {
+    _$fetchUpcomingContainerFutureAtom
+        .reportWrite(value, super.fetchUpcomingContainerFuture, () {
+      super.fetchUpcomingContainerFuture = value;
+    });
+  }
+
+  late final _$_searchingAtom =
+      Atom(name: '_ContainerStore._searching', context: context);
+
+  @override
+  bool get _searching {
+    _$_searchingAtom.reportRead();
+    return super._searching;
+  }
+
+  @override
+  set _searching(bool value) {
+    _$_searchingAtom.reportWrite(value, super._searching, () {
+      super._searching = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 containerDataList: ${containerDataList},
 containerDataUiModel: ${containerDataUiModel},
 containerDetailModel: ${containerDetailModel},
+filteredContainerDetailModel: ${filteredContainerDetailModel},
+containerProducts: ${containerProducts},
+upcomingContainers: ${upcomingContainers},
+detailQuery: ${detailQuery},
 fetchContainerFuture: ${fetchContainerFuture},
-loading: ${loading}
+fetchUpcomingContainerFuture: ${fetchUpcomingContainerFuture},
+loading: ${loading},
+searching: ${searching},
+upcomingContainerLoading: ${upcomingContainerLoading}
     ''';
   }
 }

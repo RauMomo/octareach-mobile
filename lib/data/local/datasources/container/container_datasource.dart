@@ -28,7 +28,7 @@ class ContainerDataSource {
     return await _containerStore.count(_sembastClient.database);
   }
 
-  Future<List<ContainerData>> getAllSortedByFilter(
+  Future<List<ContainerListContent>> getAllSortedByFilter(
       {List<Filter>? filters}) async {
     //creating finder
     final finder = Finder(
@@ -41,7 +41,7 @@ class ContainerDataSource {
     );
 
     return recordSnapshots.map((e) {
-      final container = ContainerData.fromMap(e.value);
+      final container = ContainerListContent.fromJson(e.value);
       return container;
     }).toList();
 

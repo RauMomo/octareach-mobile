@@ -12,6 +12,6 @@ Color hexToColor(String hexCode) {
 }
 
 String formatDateToString(DateTime date) {
-  final formatDate = DateFormat('EEE, d-MM-YYY HH:mm');
+  final formatDate = DateFormat('EEEE, d-MM-y HH:mm');
   return formatDate.format(date);
 }

@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:boilerplate/domain/usecase/profile/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/logout_account_usecase.dart';
 import 'package:mobx/mobx.dart';
 
@@ -9,21 +10,38 @@ part 'profile_store.g.dart';
 class ProfileStore = _ProfileStore with _$ProfileStore;
 
 abstract class _ProfileStore with Store {
-  _ProfileStore(this._logoutAccountUseCase);
+  _ProfileStore(this._logoutAccountUseCase, this._getProfileUseCase) {
+    _setupDisposers();
+  }
 
   final LogoutAccountUseCase _logoutAccountUseCase;
+  final GetProfileUseCase _getProfileUseCase;
+
   //observable
-  final Profile profile = Profile(
-    email: 'rizalheryadi@gmail.com',
-    address: 'Jalan Legoso No.72',
-    phoneNumber: '081275673856',
-  );
-  //computed
+  @observable
+  Profile profile = Profile.empty();
+
+  // disposers:-----------------------------------------------------------------
+  late List<ReactionDisposer> _disposers;
+
+  void _setupDisposers() async {
+    _disposers = [
+      autorun(
+        (p0) => getProfileInfo(),
+      ),
+    ];
+  }
 
   //setter & getter
-
   static ObservableFuture<void> logoutFuture =
       ObservableFuture<void>.value(null);
+
+  @observable
+  ObservableFuture<Profile> fetchProfileFuture =
+      ObservableFuture.value(Profile.empty());
+
+  @computed
+  bool get loading => fetchProfileFuture.status == FutureStatus.pending;
 
   //method
   Future<void> logoutAccount() async {
@@ -38,6 +56,18 @@ abstract class _ProfileStore with Store {
           (err) => throw Exception('Terjadi masalah'),
         );
   }
+
+  Future<void> getProfileInfo() async {
+    final future = _getProfileUseCase.call(params: null);
+    fetchProfileFuture = ObservableFuture(future);
+
+    fetchProfileFuture.then((value) {
+      this.profile = value;
+      print('value get store' + value.email);
+    }).catchError(
+      (err) => throw Exception('Terjadi masalah'),
+    );
+  }
 }
 
 class Profile {
@@ -50,9 +80,9 @@ class Profile {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'email': 'email',
+      'email': email,
       'address': address,
-      'phoneNumber': phoneNumber,
+      'phone_number': phoneNumber,
     };
   }
 
@@ -60,8 +90,12 @@ class Profile {
     return Profile(
       email: map['email'] as String,
       address: map['address'] as String,
-      phoneNumber: map['phoneNumber'] as String,
+      phoneNumber: map['phone_number'] as String,
     );
+  }
+
+  factory Profile.empty() {
+    return Profile(address: '', email: '', phoneNumber: '');
   }
 
   String toJson() => json.encode(toMap());

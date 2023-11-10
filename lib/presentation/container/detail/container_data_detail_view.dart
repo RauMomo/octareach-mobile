@@ -11,8 +11,10 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 class ContainerDataDetailView extends StatefulWidget {
   final String containerName;
+  final String containerId;
 
-  const ContainerDataDetailView({super.key, required this.containerName});
+  const ContainerDataDetailView(
+      {super.key, required this.containerName, required this.containerId});
 
   @override
   State<ContainerDataDetailView> createState() =>
@@ -36,15 +38,21 @@ class _ContainerDataDetailViewState extends State<ContainerDataDetailView> {
     super.didChangeDependencies();
 
     if (!_containerStore.loading) {
-      await _containerStore.getContainerDetail();
+      await _containerStore.getContainerDetail(widget.containerId);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildBody(),
-      appBar: _buildAppBar(),
+    return WillPopScope(
+      onWillPop: () async {
+        _containerStore.resetVariables();
+        return Future.value(true);
+      },
+      child: Scaffold(
+        body: _buildBody(),
+        appBar: _buildAppBar(),
+      ),
     );
   }
 
@@ -74,7 +82,12 @@ class _ContainerDataDetailViewState extends State<ContainerDataDetailView> {
   }
 
   _buildSearchFilter() {
-    return SearchFilter();
+    return SearchFilter(
+      onSearchMode: (query) {
+        _containerStore.detailQuery = query;
+        _containerStore.searchContainerDetail(query);
+      },
+    );
   }
 
   Widget _buildMainContent() {
@@ -82,15 +95,17 @@ class _ContainerDataDetailViewState extends State<ContainerDataDetailView> {
       builder: (context) => _containerStore.loading
           ? CustomProgressIndicatorWidget()
           : Material(
-              child: _buildListView(),
+              child: !_containerStore.searching
+                  ? _buildListView()
+                  : _buildSearchListView(),
             ),
     );
   }
 
   Widget _buildListView() {
-    final containerList = _containerStore.containerDetailModel!.receiptList;
+    final containerList = _containerStore.containerDetailModel!.data.product;
     final locale = context.appLocale;
-    return containerList!.isNotEmpty
+    return containerList.isNotEmpty
         ? ListView.separated(
             padding: EdgeInsets.symmetric(vertical: 16),
             itemCount: containerList.length,
@@ -99,8 +114,9 @@ class _ContainerDataDetailViewState extends State<ContainerDataDetailView> {
             },
             itemBuilder: (context, position) {
               return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: SizedBox.shrink());
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: _buildListItem(position),
+              );
             },
           )
         : Center(
@@ -110,161 +126,177 @@ class _ContainerDataDetailViewState extends State<ContainerDataDetailView> {
           );
   }
 
-  // Widget _buildListItem(int position) {
-  //   var item = _containerStore.containerDetailModel!.receiptList![position];
-  //   return ClipRRect(
-  //     borderRadius: BorderRadius.circular(10.0),
-  //     child: Container(
-  //       decoration: BoxDecoration(
-  //           color: Colors.white,
-  //           border:
-  //               Border(left: BorderSide(color: context.primary, width: 16.0)),
-  //           boxShadow: [
-  //             BoxShadow(
-  //               color: Colors.grey.withOpacity(0.5),
-  //               spreadRadius: 5,
-  //               blurRadius: 7,
-  //               offset: Offset(0, 3), // changes position of shadow
-  //             ),
-  //           ]),
-  //       child: ListTile(
-  //         dense: true,
-  //         visualDensity: VisualDensity(vertical: VisualDensity.maximumDensity),
-  //         style: ListTileStyle.list,
-  //         minLeadingWidth: 0.0,
-  //         contentPadding: EdgeInsets.symmetric(vertical: 8.0),
-  //         leading: SizedBox.square(),
-  //         trailing: PopupMenuButton(
-  //             elevation: 4.0,
-  //             constraints:
-  //                 BoxConstraints(minWidth: Dimens.screenWidth(context) * .1),
-  //             position: PopupMenuPosition.over,
-  //             offset: Offset(0.0, -16.0),
-  //             padding: EdgeInsets.all(0),
-  //             itemBuilder: (context) {
-  //               return <PopupMenuEntry>[
-  //                 PopupMenuItem(
-  //                   height: Dimens.screenHeight(context) * .04,
-  //                   value: '0',
-  //                   child: Text(
-  //                     'Edit Data',
-  //                     style: context.textTheme.bodySmall,
-  //                   ),
-  //                   // onTap: () => onSelected,
-  //                 ),
-  //                 PopupMenuItem(
-  //                   height: Dimens.screenHeight(context) * .04,
-  //                   value: '1',
-  //                   child: Text(
-  //                     'Hapus Data',
-  //                     style: context.textTheme.bodySmall,
-  //                   ),
-  //                   // onTap: () => onSelected,
-  //                 )
-  //               ];
-  //             },
-  //             child: FractionallySizedBox(
-  //               alignment: Alignment.center,
-  //               child: Icon(Icons.more_vert),
-  //               widthFactor: .1,
-  //             )),
-  //         title: Padding(
-  //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.stretch,
-  //             children: [
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 children: [
-  //                   Text(
-  //                     item.markingNumber,
-  //                     maxLines: 1,
-  //                     overflow: TextOverflow.ellipsis,
-  //                     softWrap: false,
-  //                     style:
-  //                         context.textTheme.bodyMedium!.copyWith(fontSize: 11),
-  //                   ),
-  //                   Text(
-  //                     item.updatedAt.toString(),
-  //                     maxLines: 1,
-  //                     overflow: TextOverflow.ellipsis,
-  //                     softWrap: false,
-  //                     style:
-  //                         context.textTheme.bodyMedium!.copyWith(fontSize: 11),
-  //                   ),
-  //                 ],
-  //               ),
-  //               Dimens.vSpaceTiny,
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                 children: [
-  //                   Text(
-  //                     item.receivingNumber,
-  //                     maxLines: 1,
-  //                     overflow: TextOverflow.ellipsis,
-  //                     softWrap: false,
-  //                     style: context.textTheme.titleMedium,
-  //                   ),
-  //                   Text(
-  //                     item.history.packing!.containerNoConsortiom.toString(),
-  //                     maxLines: 1,
-  //                     overflow: TextOverflow.ellipsis,
-  //                     softWrap: false,
-  //                     style:
-  //                         context.textTheme.bodyMedium!.copyWith(fontSize: 11),
-  //                   ),
-  //                 ],
-  //               ),
-  //               Dimens.vSpaceRegular,
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                 children: [
-  //                   Text(
-  //                     item.product.,
-  //                     maxLines: 1,
-  //                     overflow: TextOverflow.ellipsis,
-  //                     softWrap: false,
-  //                     style: context.textTheme.titleMedium,
-  //                   ),
-  //                   RichText(
-  //                     text: TextSpan(
-  //                       children: [
-  //                         TextSpan(
-  //                             text: item.quantity.toString(),
-  //                             style: context.textTheme.titleMedium!
-  //                                 .copyWith(fontWeight: FontWeight.bold)),
-  //                         TextSpan(
-  //                             text: ' QC', style: context.textTheme.titleMedium)
-  //                       ],
-  //                     ),
-  //                   )
-  //                   // Text(
-  //                   //   '${item.quantity.toString()} QC',
-  //                   //   maxLines: 1,
-  //                   //   overflow: TextOverflow.ellipsis,
-  //                   //   softWrap: false,
-  //                   //   style: context.textTheme.titleMedium,
-  //                   // ),
-  //                 ],
-  //               ),
-  //               Divider(
-  //                 thickness: 1.5,
-  //                 indent: 0.0,
-  //               ),
-  //               Text(
-  //                 'Notes: ${item.notes}',
-  //                 maxLines: 1,
-  //                 overflow: TextOverflow.ellipsis,
-  //                 softWrap: false,
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget _buildSearchListView() {
+    final containerList =
+        _containerStore.filteredContainerDetailModel!.data.product;
+    final locale = context.appLocale;
+    return containerList.isNotEmpty
+        ? ListView.separated(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            itemCount: containerList.length,
+            separatorBuilder: (context, position) {
+              return Dimens.vSpaceSemiRegular;
+            },
+            itemBuilder: (context, position) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: _buildListItem(position),
+              );
+            },
+          )
+        : Center(
+            child: Text(
+              locale.translate('home_tv_no_post_found'),
+            ),
+          );
+  }
+
+  Widget _buildListItem(int position) {
+    var mainData = _containerStore.containerDetailModel!.data;
+    var item = _containerStore.containerProducts[position];
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10.0),
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border:
+                Border(left: BorderSide(color: context.primary, width: 16.0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ]),
+        child: ListTile(
+          dense: true,
+          visualDensity: VisualDensity(vertical: VisualDensity.maximumDensity),
+          style: ListTileStyle.list,
+          minLeadingWidth: 0.0,
+          contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+          leading: SizedBox.square(),
+          trailing: PopupMenuButton(
+              elevation: 4.0,
+              constraints:
+                  BoxConstraints(minWidth: Dimens.screenWidth(context) * .1),
+              position: PopupMenuPosition.over,
+              offset: Offset(0.0, -16.0),
+              padding: EdgeInsets.all(0),
+              itemBuilder: (context) {
+                return <PopupMenuEntry>[
+                  PopupMenuItem(
+                    height: Dimens.screenHeight(context) * .04,
+                    value: '0',
+                    child: Text(
+                      'Edit Data',
+                      style: context.textTheme.bodySmall,
+                    ),
+                    // onTap: () => onSelected,
+                  ),
+                  PopupMenuItem(
+                    height: Dimens.screenHeight(context) * .04,
+                    value: '1',
+                    child: Text(
+                      'Hapus Data',
+                      style: context.textTheme.bodySmall,
+                    ),
+                    // onTap: () => onSelected,
+                  )
+                ];
+              },
+              child: FractionallySizedBox(
+                alignment: Alignment.center,
+                child: Icon(Icons.more_vert),
+                widthFactor: .1,
+              )),
+          title: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      item!.markingNumber,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      style:
+                          context.textTheme.bodyMedium!.copyWith(fontSize: 11),
+                    ),
+                    Text(
+                      mainData.updatedAt.toString(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      style:
+                          context.textTheme.bodyMedium!.copyWith(fontSize: 11),
+                    ),
+                  ],
+                ),
+                Dimens.vSpaceTiny,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      mainData.receivingNumber,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      style: context.textTheme.titleMedium,
+                    ),
+                    Text(
+                      widget.containerName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      style:
+                          context.textTheme.bodyMedium!.copyWith(fontSize: 11),
+                    ),
+                  ],
+                ),
+                Dimens.vSpaceRegular,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      item.product,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      style: context.textTheme.titleMedium,
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: item.quantity.toString(),
+                              style: context.textTheme.titleMedium!
+                                  .copyWith(fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text: ' QC', style: context.textTheme.titleMedium)
+                        ],
+                      ),
+                    )
+                    // Text(
+                    //   '${item.quantity.toString()} QC',
+                    //   maxLines: 1,
+                    //   overflow: TextOverflow.ellipsis,
+                    //   softWrap: false,
+                    //   style: context.textTheme.titleMedium,
+                    // ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _handleErrorMessage() {
     return Observer(

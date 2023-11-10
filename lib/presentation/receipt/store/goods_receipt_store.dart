@@ -12,7 +12,9 @@ class GoodsReceiptStore = _GoodsReceiptStore with _$GoodsReceiptStore;
 
 abstract class _GoodsReceiptStore with Store {
   //constructor:---------------------------------------------------------------
-  _GoodsReceiptStore(this._getGoodsReceiptUseCase, this.errorStore);
+  _GoodsReceiptStore(this._getGoodsReceiptUseCase, this.errorStore) {
+    _setupDisposers();
+  }
 
   // use cases:-----------------------------------------------------------------
   final GetGoodsReceiptUseCase _getGoodsReceiptUseCase;
@@ -20,6 +22,20 @@ abstract class _GoodsReceiptStore with Store {
   // stores:--------------------------------------------------------------------
   // store for handling errors
   final ErrorStore errorStore;
+
+  // disposers:-----------------------------------------------------------------
+  late List<ReactionDisposer> _disposers;
+
+  void _setupDisposers() async {
+    _disposers = [
+      reaction(
+        (_) => packingReceiveList,
+        (p0) {
+          packingReceiveList = p0;
+        },
+      )
+    ];
+  }
 
   // store variables:-----------------------------------------------------------
   static ObservableFuture<GoodsReceiptData?> emptyReceiptResponse =
@@ -65,8 +81,11 @@ abstract class _GoodsReceiptStore with Store {
           .toList();
     }).catchError((error) {
       errorStore.errorMessage = DioErrorUtil.handleError(error);
-      // throw error;
     });
+  }
+
+  removeData(int index) {
+    this.packingReceiveList.removeAt(index);
   }
 }
 

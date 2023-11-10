@@ -6,6 +6,8 @@ import 'package:boilerplate/domain/repository/receipt/receipt_repository.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/domain/usecase/container/get_container_detail_usecase.dart';
 import 'package:boilerplate/domain/usecase/container/get_container_usecase.dart';
+import 'package:boilerplate/domain/usecase/container/get_upcoming_container_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/logout_account_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/add_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/delete_receipt_usecase.dart';
@@ -13,7 +15,6 @@ import 'package:boilerplate/domain/usecase/receipt/find_receipt_by_id_usecase.da
 import 'package:boilerplate/domain/usecase/receipt/get_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/insert_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/update_receipt_usecase.dart';
-import 'package:boilerplate/domain/usecase/upcoming/get_upcoming_container_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_login_info_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
@@ -81,12 +82,17 @@ mixin UseCaseModule {
     );
 
     getIt.registerSingleton<GetUpcomingContainerUseCase>(
-      GetUpcomingContainerUseCase(getIt<ContainerRepository>()),
+      GetUpcomingContainerUseCase(
+          containerRepository: getIt<ContainerRepository>()),
     );
 
-    // container:--------------------------------------------------------------------
+    // profile:--------------------------------------------------------------------
     getIt.registerSingleton<LogoutAccountUseCase>(
       LogoutAccountUseCase(getIt<ProfileRepository>()),
+    );
+
+    getIt.registerSingleton<GetProfileUseCase>(
+      GetProfileUseCase(getIt<ProfileRepository>()),
     );
   }
 }

@@ -3,7 +3,7 @@ import 'package:boilerplate/core/widgets/app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/search_filter.dart';
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/presentation/upcoming/store/upcoming_container_store.dart';
+import 'package:boilerplate/presentation/container/store/container_store.dart';
 import 'package:boilerplate/utils/conversion/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -17,16 +17,15 @@ class UpcomingContainerListView extends StatefulWidget {
 }
 
 class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
-  final UpcomingContainerStore _containerStore =
-      getIt<UpcomingContainerStore>();
+  final ContainerStore _containerStore = getIt<ContainerStore>();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     // check to see if already called api
-    if (!_containerStore.isLoading) {
-      _containerStore.fetchUpcomingContainer();
+    if (!_containerStore.upcomingContainerLoading) {
+      _containerStore.getUpcomingContainer();
     }
   }
 
@@ -62,13 +61,15 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
   }
 
   _buildSearchFilter() {
-    return SearchFilter();
+    return SearchFilter(
+      onSearchMode: (query) {},
+    );
   }
 
   Widget _buildMainContent() {
     return Observer(
       builder: (context) {
-        return _containerStore.isLoading
+        return _containerStore.upcomingContainerLoading
             ? CustomProgressIndicatorWidget()
             : Material(
                 child: _buildListView(),
@@ -78,10 +79,9 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
   }
 
   Widget _buildListView() {
-    final containerList =
-        _containerStore.upcomingContainerList!.upcomingContainers;
+    final containerList = _containerStore.upcomingContainers;
     final locale = context.appLocale;
-    return containerList!.isNotEmpty
+    return containerList.isNotEmpty
         ? ListView.separated(
             padding: EdgeInsets.symmetric(vertical: 16),
             itemCount: containerList.length,
@@ -103,8 +103,7 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
   }
 
   Widget _buildListItem(int position) {
-    var item =
-        _containerStore.upcomingContainerList!.upcomingContainers![position];
+    var item = _containerStore.upcomingContainers[position];
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.0),
       child: Container(
@@ -137,7 +136,7 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      item.containerNumber!,
+                      'RN:' + item!.containerNumber!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: false,
@@ -153,7 +152,7 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
                                 .copyWith(fontSize: 11),
                           ),
                           TextSpan(
-                            text: item.estimationTime!,
+                            text: item.dateTime,
                             style: context.textTheme.bodyMedium!.copyWith(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
