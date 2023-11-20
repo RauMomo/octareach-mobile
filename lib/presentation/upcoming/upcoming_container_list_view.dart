@@ -1,7 +1,6 @@
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
-import 'package:boilerplate/core/widgets/search_filter.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/container/store/container_store.dart';
 import 'package:boilerplate/utils/conversion/extensions.dart';
@@ -61,9 +60,10 @@ class _UpcomingContainerListViewState extends State<UpcomingContainerListView> {
   }
 
   _buildSearchFilter() {
-    return SearchFilter(
-      onSearchMode: (query) {},
-    );
+    // return SearchFilter(
+    //   onSearchMode: (query) {},
+    // );
+    return SizedBox.shrink();
   }
 
   Widget _buildMainContent() {

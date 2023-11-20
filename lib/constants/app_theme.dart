@@ -108,9 +108,9 @@ class AppThemeData {
   static const _bold = FontWeight.w700;
 
   static final TextTheme _textTheme = TextTheme(
-    titleLarge: GoogleFonts.inter(fontWeight: _bold, fontSize: 20.0),
-    titleMedium: GoogleFonts.inter(fontWeight: _semiBold, fontSize: 18.0),
-    titleSmall: GoogleFonts.inter(fontWeight: _semiBold, fontSize: 16.0),
+    titleLarge: GoogleFonts.inter(fontWeight: _bold, fontSize: 18.0),
+    titleMedium: GoogleFonts.inter(fontWeight: _semiBold, fontSize: 16.0),
+    titleSmall: GoogleFonts.inter(fontWeight: _semiBold, fontSize: 14.0),
     bodyLarge: GoogleFonts.inter(fontWeight: _medium, fontSize: 16.0),
     bodyMedium: GoogleFonts.inter(fontWeight: _medium, fontSize: 14.0),
     bodySmall: GoogleFonts.inter(fontWeight: _medium, fontSize: 13.0),

@@ -110,6 +110,7 @@ abstract class _ContainerStore with Store {
   void setIsSearching() {
     this._searching = !searching;
   }
+  
 
   Future getContainerList() async {
     final future = _getContainerUseCase.call(params: null);

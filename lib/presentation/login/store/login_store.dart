@@ -147,7 +147,7 @@ abstract class _UserStore with Store {
     }).catchError((e) {
       if (e.runtimeType.toString() != "_TypeError") {
         flushbar = FlushbarHelper.createError(
-          title: e.message,
+          title: '',
           message: 'Make sure you use the registered email and password',
           duration: Duration(seconds: 2),
         );

@@ -23,7 +23,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
     super.didChangeDependencies();
 
     // check to see if already called api
-    if (!_goodsStore.loading) {
+    if (!_goodsStore.loading && _goodsStore.packingReceiveList.length == 0) {
       _goodsStore.getPosts();
     }
   }
@@ -69,7 +69,18 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
 
   _buildSearchFilter() {
     return SearchFilter(
-      onSearchMode: (query) {},
+      onFilterMode: () {
+        _goodsStore.filterByDate();
+      },
+      onSearchMode: (query) {
+        _goodsStore.detailQuery = query;
+        _goodsStore.searchProductData(query).then((value) {
+          setState(() {});
+        });
+      },
+      store: _goodsStore,
+      startDate: _goodsStore.startDate,
+      endDate: _goodsStore.endDate,
     );
   }
 

@@ -1,15 +1,31 @@
 import 'package:boilerplate/constants/colors.dart';
+import 'package:boilerplate/constants/dimens.dart';
+import 'package:boilerplate/core/widgets/custom_date_picker.dart';
+import 'package:boilerplate/core/widgets/readonly_textfield.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/utils/conversion/conversion.dart';
 import 'package:boilerplate/utils/conversion/extensions.dart';
 import 'package:boilerplate/utils/functions/debouncer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
+// ignore: must_be_immutable
 class SearchFilter extends StatelessWidget {
   final TextEditingController _searchController = new TextEditingController();
 
   final void Function(dynamic) onSearchMode;
+  VoidCallback onFilterMode;
+  DateTime startDate;
+  DateTime endDate;
+  final dynamic store;
 
-  SearchFilter({super.key, required this.onSearchMode});
+  SearchFilter(
+      {super.key,
+      required this.onSearchMode,
+      required this.onFilterMode,
+      required this.startDate,
+      required this.endDate,
+      required this.store});
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +79,13 @@ class SearchFilter extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                 ),
                 textColor: Colors.white,
-                onPressed: () {
-                  debugPrint('asem');
+                onPressed: () async {
+                  await showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return _buildBottomSheetFilter(context);
+                    },
+                  );
                 },
                 isFullWidth: false,
                 buttonColor: context.primary,
@@ -74,6 +95,126 @@ class SearchFilter extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  _buildBottomSheetFilter(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Dimens.vSpaceSmall,
+        Text(
+          'Filter Berdasarkan Tanggal',
+          style: context.textTheme.bodyLarge,
+        ),
+        Dimens.vSpaceSmall,
+        Divider(
+          color: Colors.black,
+          thickness: 1.5,
+        ),
+        StatefulBuilder(
+          builder: (context, setState) => Observer(
+            builder: (context) => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CustomDatePicker(
+                              onConfirmed: (DateTime date) {
+                                store.startDate = date;
+                                if ((store.startDate as DateTime)
+                                    .isAfter(store.endDate as DateTime)) {
+                                  store.endDate = store.startDate;
+                                }
+                              },
+                              startDate: startDate,
+                              endDate: endDate,
+                              store: store),
+                        ],
+                      );
+                    },
+                  ).then((_) {
+                    setState.call(() {
+                      startDate = store.startDate;
+                      endDate = store.endDate;
+                    });
+                  });
+                },
+                child: ReadOnlyTextFieldWidget(
+                  formatDateAltToString(store.startDate),
+                  hintText: 'Start Date',
+                  icon: Icons.calendar_today_outlined,
+                ),
+              ),
+            ),
+          ),
+        ),
+        StatefulBuilder(
+          builder: (context, setState) => Observer(
+            builder: (context) => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CustomDatePicker(
+                            onConfirmed: (DateTime date) {
+                              store.endDate = date;
+                              if ((store.startDate as DateTime)
+                                  .isAfter(store.endDate as DateTime)) {
+                                store.startDate = store.endDate;
+                              }
+                            },
+                            startDate: startDate,
+                            endDate: endDate,
+                            store: store,
+                          ),
+                        ],
+                      );
+                    },
+                  ).then((_) {
+                    setState.call(() {
+                      startDate = store.startDate;
+                      endDate = store.endDate;
+                    });
+                  });
+                },
+                child: ReadOnlyTextFieldWidget(
+                  formatDateAltToString(store.endDate),
+                  hintText: 'End Date',
+                  icon: Icons.calendar_today_outlined,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 16.0),
+          child: MaterialButton(
+              onPressed: () {
+                context.navigator.pop();
+                onFilterMode.call();
+              },
+              color: context.primary,
+              child: RoundedButtonWidget(
+                isFullWidth: true,
+                height: 60,
+                buttonColor: Colors.black,
+                buttonText: 'Lanjutkan',
+              )),
+        ),
+      ],
     );
   }
 }

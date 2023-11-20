@@ -2,7 +2,6 @@ import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
-import 'package:boilerplate/core/widgets/search_filter.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/container/store/container_store.dart';
 import 'package:boilerplate/utils/conversion/extensions.dart';
@@ -82,12 +81,13 @@ class _ContainerDataDetailViewState extends State<ContainerDataDetailView> {
   }
 
   _buildSearchFilter() {
-    return SearchFilter(
-      onSearchMode: (query) {
-        _containerStore.detailQuery = query;
-        _containerStore.searchContainerDetail(query);
-      },
-    );
+    return SizedBox.shrink();
+    // return SearchFilter(
+    //   onSearchMode: (query) {
+    //     _containerStore.detailQuery = query;
+    //     _containerStore.searchContainerDetail(query);
+    //   },
+    // );
   }
 
   Widget _buildMainContent() {

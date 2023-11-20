@@ -15,13 +15,6 @@ mixin _$ContainerStore on _ContainerStore, Store {
   bool get loading => (_$loadingComputed ??=
           Computed<bool>(() => super.loading, name: '_ContainerStore.loading'))
       .value;
-  Computed<bool>? _$searchingComputed;
-
-  @override
-  bool get searching =>
-      (_$searchingComputed ??= Computed<bool>(() => super.searching,
-              name: '_ContainerStore.searching'))
-          .value;
   Computed<bool>? _$upcomingContainerLoadingComputed;
 
   @override
@@ -77,6 +70,23 @@ mixin _$ContainerStore on _ContainerStore, Store {
     _$containerDetailModelAtom.reportWrite(value, super.containerDetailModel,
         () {
       super.containerDetailModel = value;
+    });
+  }
+
+  late final _$filteredContainerDataUiModelAtom = Atom(
+      name: '_ContainerStore.filteredContainerDataUiModel', context: context);
+
+  @override
+  List<ContainerDataUiModel?> get filteredContainerDataUiModel {
+    _$filteredContainerDataUiModelAtom.reportRead();
+    return super.filteredContainerDataUiModel;
+  }
+
+  @override
+  set filteredContainerDataUiModel(List<ContainerDataUiModel?> value) {
+    _$filteredContainerDataUiModelAtom
+        .reportWrite(value, super.filteredContainerDataUiModel, () {
+      super.filteredContainerDataUiModel = value;
     });
   }
 
@@ -201,6 +211,7 @@ mixin _$ContainerStore on _ContainerStore, Store {
 containerDataList: ${containerDataList},
 containerDataUiModel: ${containerDataUiModel},
 containerDetailModel: ${containerDetailModel},
+filteredContainerDataUiModel: ${filteredContainerDataUiModel},
 filteredContainerDetailModel: ${filteredContainerDetailModel},
 containerProducts: ${containerProducts},
 upcomingContainers: ${upcomingContainers},
@@ -208,7 +219,6 @@ detailQuery: ${detailQuery},
 fetchContainerFuture: ${fetchContainerFuture},
 fetchUpcomingContainerFuture: ${fetchUpcomingContainerFuture},
 loading: ${loading},
-searching: ${searching},
 upcomingContainerLoading: ${upcomingContainerLoading}
     ''';
   }

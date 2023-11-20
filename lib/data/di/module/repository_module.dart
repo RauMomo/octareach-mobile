@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:boilerplate/data/local/datasources/container/container_datasource.dart';
+import 'package:boilerplate/data/local/datasources/products/products_datasource.dart';
 import 'package:boilerplate/data/local/datasources/receipt/receipt_datasource.dart';
 import 'package:boilerplate/data/network/apis/container/container_api.dart';
 import 'package:boilerplate/data/network/apis/receipt/receipt_api.dart';
@@ -33,10 +34,14 @@ mixin RepositoryModule {
       getIt<SharedPreferenceHelper>(),
     ));
 
-    getIt.registerSingleton<GoodsReceiptRepository>(GoodsReceiptRepositoryImpl(
-      getIt<GoodsReceiptApi>(),
-      getIt<GoodsReceiptDataSource>(),
-    ));
+    getIt.registerSingleton<GoodsReceiptRepository>(
+      GoodsReceiptRepositoryImpl(
+        getIt<GoodsReceiptApi>(),
+        getIt<GoodsReceiptDataSource>(),
+        getIt<ProductsDataSource>(),
+        getIt<ContainerDataSource>(),
+      ),
+    );
 
     getIt.registerSingleton<ContainerRepository>(ContainerRepositoryImpl(
       getIt<ContainerDataSource>(),

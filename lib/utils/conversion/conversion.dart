@@ -15,3 +15,13 @@ String formatDateToString(DateTime date) {
   final formatDate = DateFormat('EEEE, d-MM-y HH:mm');
   return formatDate.format(date);
 }
+
+String formatDateAltToString(DateTime date) {
+  final formatDate = DateFormat('EEEE, d-MM-y');
+  return formatDate.format(date);
+}
+
+DateTime formatStringToDateTime(String str) {
+  final formattedDate = DateFormat('EEEE, d-MM-y HH:mm').parse(str);
+  return formattedDate;
+}

@@ -15,6 +15,11 @@ class Endpoints {
 
   // receipt
   static const String receiptUrl = "/packing-receive";
+  static const String packingUrl = "/packing";
+
+  // product
+  static const String productCategoryUrl = "/product-category";
+  static const String productUrl = "/product";
 
   // receipt
   static const String mainReceiveUrl = "/receive";

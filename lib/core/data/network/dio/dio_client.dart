@@ -7,6 +7,7 @@ import 'package:boilerplate/core/stores/global/global_variables.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/conversion/extensions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
@@ -51,7 +52,39 @@ class DioClient {
               ),
             );
           }
+
+          // var token = await prefs.authToken;
+
+          // if (token == null || token.isEmpty) {
+          //   getIt<UserStore>().isLoggedIn = false;
+          //   return handler
+          //       .reject(DioException(requestOptions: RequestOptions()));
+          // }
+
           return handler.next(options);
+        },
+        onError: (e, handler) async {
+          var token = await prefs.authToken;
+
+          if (token == null || token.isEmpty) {
+            getIt<UserStore>().isLoggedIn = false;
+            return handler
+                .reject(DioException(requestOptions: RequestOptions()));
+          }
+          if (e.type == DioExceptionType.badResponse &&
+              e.message!.toLowerCase() == 'unauthenticated') {
+            getIt<UserStore>().isLoggedIn = false;
+            return handler.reject(
+              DioException.badResponse(
+                statusCode: 401,
+                requestOptions: RequestOptions(),
+                response: Response(
+                  requestOptions: RequestOptions(),
+                  data: {'message': 'Unauthenticated'},
+                ),
+              ),
+            );
+          }
         },
       ),
     );
@@ -64,24 +97,6 @@ class DioClient {
       };
       return client;
     };
-
-    // _dio.interceptors.add(
-    //   InterceptorsWrapper(
-    //     onRequest: (options, handler) async {
-    //       checkConnectivity();
-    //       var token = await prefs.authToken;
-
-    //       if (token == null) {
-    //         getIt<UserStore>().isLoggedIn = false;
-    //       }
-    //     },
-    //     onError: (e, handler) {
-    //       if (e.response!.statusCode == 401) {
-    //         getIt<UserStore>().isLoggedIn = false;
-    //       }
-    //     },
-    //   ),
-    // );
   }
 
   Dio get dio => _dio;
@@ -98,7 +113,7 @@ class DioClient {
       var response = await _dio.get(path);
       return response;
     } on DioException catch (ex) {
-      throw Exception(json.decode(ex.response.toString())['error']);
+      throw Exception(json.decode(ex.response.toString())['message']);
     }
   }
 

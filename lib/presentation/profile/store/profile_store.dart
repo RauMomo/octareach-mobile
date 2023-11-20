@@ -26,9 +26,7 @@ abstract class _ProfileStore with Store {
 
   void _setupDisposers() async {
     _disposers = [
-      autorun(
-        (p0) => getProfileInfo(),
-      ),
+      autorun((_) => getProfileInfo()),
     ];
   }
 
@@ -67,6 +65,12 @@ abstract class _ProfileStore with Store {
     }).catchError(
       (err) => throw Exception('Terjadi masalah'),
     );
+  }
+
+  void dispose() {
+    for (final d in _disposers) {
+      d();
+    }
   }
 }
 

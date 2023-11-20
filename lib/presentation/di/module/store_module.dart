@@ -9,6 +9,9 @@ import 'package:boilerplate/domain/usecase/container/get_upcoming_container_usec
 import 'package:boilerplate/domain/usecase/profile/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/logout_account_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/add_receipt_usecase.dart';
+import 'package:boilerplate/domain/usecase/receipt/fetch_containers_dropdown_usecase.dart';
+import 'package:boilerplate/domain/usecase/receipt/fetch_packing_usecase.dart';
+import 'package:boilerplate/domain/usecase/receipt/fetch_products_dropdown_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/get_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_login_info_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -60,6 +63,9 @@ mixin StoreModule {
     getIt.registerSingleton<AddGoodsReceiptStore>(
       AddGoodsReceiptStore(
         getIt<AddGoodsReceiptUseCase>(),
+        getIt<FetchProductsDropdownUsecase>(),
+        getIt<FetchContainersDropdownUseCase>(),
+        getIt<FetchPackingUseCase>(),
         getIt<ErrorStore>(),
       ),
     );

@@ -66,7 +66,12 @@ class _AddProductReceiptScreenState extends State<AddProductReceiptScreen> {
           padding: EdgeInsets.all(16),
           child: ElevatedButton(
             style: context.elevatedButtonTheme.style!,
-            onPressed: () {},
+            onPressed: () {
+              var listType = DropdownListType.containerList;
+              var bottomSheetTitle = _getDropdownTitle(listType);
+              var rnList = _addGoodsReceiptStore.retrieveFromEnum(listType);
+              _buildBottomSheet(dropdownList: rnList, title: bottomSheetTitle);
+            },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -104,7 +109,12 @@ class _AddProductReceiptScreenState extends State<AddProductReceiptScreen> {
                       text: dataList[index].receivingNumber),
                   readOnly: true,
                   onTap: () async {
-                    _buildBottomSheet();
+                    var listType = DropdownListType.receivingNumber;
+                    var bottomSheetTitle = _getDropdownTitle(listType);
+                    var rnList =
+                        _addGoodsReceiptStore.retrieveFromEnum(listType);
+                    _buildBottomSheet(
+                        dropdownList: rnList, title: bottomSheetTitle);
                   },
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -129,6 +139,14 @@ class _AddProductReceiptScreenState extends State<AddProductReceiptScreen> {
                       .copyWith(color: Colors.black),
                   controller:
                       TextEditingController(text: dataList[index].product),
+                  onTap: () async {
+                    var listType = DropdownListType.products;
+                    var products =
+                        _addGoodsReceiptStore.retrieveFromEnum(listType);
+                    var bottomSheetTitle = _getDropdownTitle(listType);
+                    _buildBottomSheet(
+                        dropdownList: products, title: bottomSheetTitle);
+                  },
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(18),
@@ -305,10 +323,12 @@ class _AddProductReceiptScreenState extends State<AddProductReceiptScreen> {
     );
   }
 
-  _buildBottomSheet() async {
+  _buildBottomSheet(
+      {required List<dynamic> dropdownList, required String title}) async {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
@@ -330,7 +350,7 @@ class _AddProductReceiptScreenState extends State<AddProductReceiptScreen> {
                     Container(
                       alignment: FractionalOffset.center,
                       padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Text('Receiving Number'),
+                      child: Text(title),
                     ),
                     Expanded(
                       child: Padding(
@@ -339,10 +359,10 @@ class _AddProductReceiptScreenState extends State<AddProductReceiptScreen> {
                           shrinkWrap: true,
                           controller: controller,
                           padding: EdgeInsets.zero,
-                          itemCount: _addGoodsReceiptStore.rnList.length,
+                          itemCount: dropdownList.length,
                           itemExtent: 50,
                           itemBuilder: (context, index) {
-                            var value = _addGoodsReceiptStore.rnList[index];
+                            var value = dropdownList[index];
                             return InkWell(
                               onTap: () {
                                 context.navigator.pop(value);
@@ -364,5 +384,16 @@ class _AddProductReceiptScreenState extends State<AddProductReceiptScreen> {
         );
       },
     ).then((value) => print(value));
+  }
+
+  _getDropdownTitle(DropdownListType type) {
+    switch (type) {
+      case DropdownListType.products:
+        return 'Products';
+      case DropdownListType.receivingNumber:
+        return 'Receiving Number';
+      case DropdownListType.containerList:
+        return 'Container';
+    }
   }
 }

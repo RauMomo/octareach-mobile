@@ -33,7 +33,7 @@ abstract class _GoodsReceiptStore with Store {
         (p0) {
           packingReceiveList = p0;
         },
-      )
+      ),
     ];
   }
 
@@ -53,6 +53,18 @@ abstract class _GoodsReceiptStore with Store {
 
   @observable
   List<PackingReceiveModel> packingReceiveList = [];
+
+  @observable
+  List<PackingReceiveModel> filteredPackingReceiveList = [];
+
+  @observable
+  DateTime startDate = DateTime.now();
+
+  @observable
+  DateTime endDate = DateTime.now();
+
+  @observable
+  String detailQuery = '';
 
   @computed
   bool get loading => fetchPostsFuture.status == FutureStatus.pending;
@@ -86,6 +98,38 @@ abstract class _GoodsReceiptStore with Store {
 
   removeData(int index) {
     this.packingReceiveList.removeAt(index);
+  }
+
+  Future searchProductData(String query) async {
+    this.filteredPackingReceiveList = this
+        .packingReceiveList
+        .where(
+          (element) =>
+              element.markingNumber.contains(query) ||
+              element.notes.contains(query) ||
+              element.product.contains(query),
+        )
+        .toList();
+  }
+
+  Future filterByDate() async {
+    await searchProductData(this.detailQuery).then((_) {
+      this.filteredPackingReceiveList =
+          this.filteredPackingReceiveList.where((element) {
+        return startDate.isBefore(
+              formatStringToDateTime(element.createdAt),
+            ) &&
+            endDate.isAfter(
+              formatStringToDateTime(element.createdAt),
+            );
+      }).toList();
+    });
+  }
+
+  void dispose() {
+    for (final d in _disposers) {
+      d();
+    }
   }
 }
 

@@ -1,6 +1,5 @@
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
-import 'package:boilerplate/core/widgets/search_filter.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/container/detail/container_data_detail_view.dart';
 import 'package:boilerplate/presentation/container/store/container_store.dart';
@@ -67,12 +66,13 @@ class _ContainerDataListScreenState extends State<ContainerDataListScreen> {
   }
 
   _buildSearchFilter() {
-    return SearchFilter(
-      onSearchMode: (query) {
-        _containerStore.detailQuery = query;
-        _containerStore.searchContainerData(query);
-      },
-    );
+    return SizedBox.shrink();
+    // return SearchFilter(
+    //   onSearchMode: (query) {
+    //     _containerStore.detailQuery = query;
+    //     _containerStore.searchContainerData(query);
+    //   },
+    // );
   }
 
   Widget _buildMainContent() {

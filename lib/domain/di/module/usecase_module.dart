@@ -11,6 +11,9 @@ import 'package:boilerplate/domain/usecase/profile/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/logout_account_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/add_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/delete_receipt_usecase.dart';
+import 'package:boilerplate/domain/usecase/receipt/fetch_containers_dropdown_usecase.dart';
+import 'package:boilerplate/domain/usecase/receipt/fetch_packing_usecase.dart';
+import 'package:boilerplate/domain/usecase/receipt/fetch_products_dropdown_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/find_receipt_by_id_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/get_receipt_usecase.dart';
 import 'package:boilerplate/domain/usecase/receipt/insert_receipt_usecase.dart';
@@ -70,6 +73,18 @@ mixin UseCaseModule {
     );
     getIt.registerSingleton<DeleteReceiptUseCase>(
       DeleteReceiptUseCase(getIt<GoodsReceiptRepository>()),
+    );
+    getIt.registerSingleton<FetchProductsDropdownUsecase>(
+      FetchProductsDropdownUsecase(
+        getIt<GoodsReceiptRepository>(),
+      ),
+    );
+    getIt.registerSingleton<FetchContainersDropdownUseCase>(
+      FetchContainersDropdownUseCase(
+          receiptRepository: getIt<GoodsReceiptRepository>()),
+    );
+    getIt.registerSingleton<FetchPackingUseCase>(
+      FetchPackingUseCase(getIt<GoodsReceiptRepository>()),
     );
 
     // container:--------------------------------------------------------------------

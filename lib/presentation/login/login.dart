@@ -121,15 +121,11 @@ class _LoginScreenState extends State<LoginScreen> {
           icon: Icons.person,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _userStore.userEmailController,
-          inputAction: TextInputAction.none,
           autoFocus: false,
           onChanged: (value) {
-            _formStore.validateUserEmail(value);
+            _formStore.setUserId(value);
           },
-          // onFieldSubmitted: (value) {
-          //   FocusScope.of(context).requestFocus(_passwordFocusNode);
-          // },
-          errorText: _userStore.formErrorStore.userEmail,
+          errorText: _formStore.formErrorStore.userEmail,
         );
       },
     );
@@ -148,9 +144,9 @@ class _LoginScreenState extends State<LoginScreen> {
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _userStore.passwordController,
           // focusNode: _passwordFocusNode,
-          errorText: _userStore.formErrorStore.password,
+          errorText: _formStore.formErrorStore.password,
           onChanged: (value) {
-            _formStore.validatePassword(value);
+            _formStore.setPassword(value);
           },
         );
       },
@@ -191,8 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
         print('in page' + _formStore.userEmail.toString());
         print('in page' + _formStore.password.toString());
 
-        _formStore.validateAll();
-        if (_formStore.canLogin) {
+        if (_formStore.userEmail.isNotEmpty && _formStore.password.isNotEmpty) {
           DeviceUtils.hideKeyboard(context);
           _userStore.login(_userStore.userEmailController.text,
               _userStore.passwordController.text);

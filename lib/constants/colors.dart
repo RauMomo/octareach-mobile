@@ -21,4 +21,5 @@ class AppColors {
   static const Color successColor = Colors.green;
   static const Color logoutColor = Color(0xFFC03636);
   static const Color backgroundColor = Color(0xFFF3F4F6);
+  static const Color kGrey = const Color(0xFFBEBEBE);
 }

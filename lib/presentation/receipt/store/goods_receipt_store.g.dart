@@ -80,6 +80,71 @@ mixin _$GoodsReceiptStore on _GoodsReceiptStore, Store {
     });
   }
 
+  late final _$filteredPackingReceiveListAtom = Atom(
+      name: '_GoodsReceiptStore.filteredPackingReceiveList', context: context);
+
+  @override
+  List<PackingReceiveModel> get filteredPackingReceiveList {
+    _$filteredPackingReceiveListAtom.reportRead();
+    return super.filteredPackingReceiveList;
+  }
+
+  @override
+  set filteredPackingReceiveList(List<PackingReceiveModel> value) {
+    _$filteredPackingReceiveListAtom
+        .reportWrite(value, super.filteredPackingReceiveList, () {
+      super.filteredPackingReceiveList = value;
+    });
+  }
+
+  late final _$startDateAtom =
+      Atom(name: '_GoodsReceiptStore.startDate', context: context);
+
+  @override
+  DateTime get startDate {
+    _$startDateAtom.reportRead();
+    return super.startDate;
+  }
+
+  @override
+  set startDate(DateTime value) {
+    _$startDateAtom.reportWrite(value, super.startDate, () {
+      super.startDate = value;
+    });
+  }
+
+  late final _$endDateAtom =
+      Atom(name: '_GoodsReceiptStore.endDate', context: context);
+
+  @override
+  DateTime get endDate {
+    _$endDateAtom.reportRead();
+    return super.endDate;
+  }
+
+  @override
+  set endDate(DateTime value) {
+    _$endDateAtom.reportWrite(value, super.endDate, () {
+      super.endDate = value;
+    });
+  }
+
+  late final _$detailQueryAtom =
+      Atom(name: '_GoodsReceiptStore.detailQuery', context: context);
+
+  @override
+  String get detailQuery {
+    _$detailQueryAtom.reportRead();
+    return super.detailQuery;
+  }
+
+  @override
+  set detailQuery(String value) {
+    _$detailQueryAtom.reportWrite(value, super.detailQuery, () {
+      super.detailQuery = value;
+    });
+  }
+
   late final _$getPostsAsyncAction =
       AsyncAction('_GoodsReceiptStore.getPosts', context: context);
 
@@ -95,6 +160,10 @@ fetchPostsFuture: ${fetchPostsFuture},
 goodsReceiptData: ${goodsReceiptData},
 success: ${success},
 packingReceiveList: ${packingReceiveList},
+filteredPackingReceiveList: ${filteredPackingReceiveList},
+startDate: ${startDate},
+endDate: ${endDate},
+detailQuery: ${detailQuery},
 loading: ${loading}
     ''';
   }
